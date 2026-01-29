@@ -1,7 +1,7 @@
 # DayRing
 
 **See your day at a glance. Stay grounded in time.**
-[Download here]([url](https://github.com/Kojjyan/Dayring/releases))
+[Download it here.](https://github.com/Kojjyan/Dayring/releases)
 
 ## The Problem
 
