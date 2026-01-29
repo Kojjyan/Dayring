@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support DayRing</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #e8e8e8;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0;
+      user-select: none;
+      overflow: hidden;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    ::-webkit-scrollbar-thumb:active {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    ::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+
+    .bmc-header {
+      width: 100%;
+      height: 48px;
+      -webkit-app-region: drag;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 12px;
+      flex-shrink: 0;
+    }
+
+    .header-close {
+      -webkit-app-region: no-drag;
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: transparent;
+      color: #888;
+      font-size: 20px;
+      cursor: pointer;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .header-close:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      padding: 24px 40px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+
+    .support-text {
+      font-size: 1rem;
+      color: #b0b0b0;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      font-size: 1rem;
+      font-weight: 500;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #4a90d9;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #5a9ee6;
+      transform: translateY(-2px);
+    }
+
+    .btn-skip {
+      background: none;
+      color: #888;
+      text-decoration: underline;
+    }
+
+    .btn-skip:hover {
+      color: #b0b0b0;
+    }
+
+    .coffee-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header class="bmc-header">
+    <button class="header-close" id="header-close" title="Close">&times;</button>
+  </header>
+  <div class="container">
+    <div class="coffee-icon">☕</div>
+    <h1>Support the Developer</h1>
+    <p class="support-text">Support Kojjyan, the developer of this productivity tool.</p>
+    <div class="buttons">
+      <button class="btn btn-primary" onclick="openBuyMeCoffee()">Buy Me a Coffee</button>
+      <button class="btn btn-skip" onclick="skipToConfigure()">Skip</button>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('header-close').addEventListener('click', () => {
+      if (window.dayring && window.dayring.closeWindow) window.dayring.closeWindow();
+    });
+
+    function openBuyMeCoffee() {
+      if (window.dayring) {
+        window.dayring.openBuyMeCoffeeAndConfigure();
+      }
+    }
+
+    function skipToConfigure() {
+      if (window.dayring) {
+        window.dayring.skipToConfigure();
+      }
+    }
+  </script>
+</body>
+</html>

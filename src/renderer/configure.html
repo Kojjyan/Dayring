@@ -1,0 +1,2374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DayRing - Configure Your Day</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+    }
+
+    /* Global custom scrollbar for all scrollable elements */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    ::-webkit-scrollbar-thumb:active {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    ::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+
+    .header {
+      padding: 20px;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      -webkit-app-region: drag;
+    }
+
+    .header-close {
+      -webkit-app-region: no-drag;
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: transparent;
+      color: #888;
+      font-size: 20px;
+      cursor: pointer;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .header-close:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .header .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-ring {
+      width: 32px;
+      height: 32px;
+      border: 4px solid #4a90d9;
+      border-radius: 50%;
+    }
+
+    .content {
+      padding: 20px;
+      overflow-y: auto;
+      max-height: calc(100vh - 80px);
+    }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 12px;
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slider-container label {
+      min-width: 80px;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: #333;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #4a90d9;
+      cursor: pointer;
+    }
+
+    .slider-value {
+      min-width: 45px;
+      text-align: right;
+      color: #4a90d9;
+    }
+
+    .placeholder-text {
+      color: #666;
+      font-style: italic;
+      padding: 20px;
+      text-align: center;
+      border: 1px dashed #333;
+      border-radius: 8px;
+    }
+
+    /* Schedule Time Picker Styles */
+    .time-setting {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 12px;
+      background: #252540;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .time-setting-label {
+      min-width: 80px;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .time-picker-compact {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .picker-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      padding: 4px;
+    }
+
+    .picker-col.ampm {
+      min-width: 40px;
+    }
+
+    .picker-btn-sm {
+      background: none;
+      border: none;
+      color: #4a90d9;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 2px 8px;
+      transition: color 0.2s;
+    }
+
+    .picker-btn-sm:hover {
+      color: #6ba3e0;
+    }
+
+    .picker-val {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      min-width: 28px;
+      text-align: center;
+      padding: 2px 0;
+    }
+
+    .time-separator {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    /* Task Editor Styles */
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: #252540;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .task-item:hover .task-delete {
+      opacity: 1;
+    }
+
+    .task-color {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      border: 2px solid rgba(255,255,255,0.2);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .task-color:hover {
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    .task-name {
+      flex: 1;
+      min-width: 80px;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .task-name:focus {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .task-name::placeholder {
+      color: #666;
+    }
+
+    .task-time {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #888;
+      font-size: 13px;
+    }
+
+    .task-time-input {
+      width: 70px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid #444;
+      color: #fff;
+      font-size: 13px;
+      padding: 4px 6px;
+      border-radius: 4px;
+      text-align: center;
+      outline: none;
+    }
+
+    .task-time-input:focus {
+      border-color: #4a90d9;
+      background: rgba(74,144,217,0.1);
+    }
+
+    /* Smart Time Input Container */
+    .time-input-group {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid #444;
+      border-radius: 4px;
+      overflow: hidden;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .time-input-group:focus-within {
+      border-color: #4a90d9;
+      background: rgba(74,144,217,0.1);
+    }
+
+    .time-input-group .time-part {
+      width: 24px;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 13px;
+      padding: 4px 2px;
+      text-align: center;
+      outline: none;
+    }
+
+    .time-input-group .time-colon {
+      color: #888;
+      font-size: 13px;
+      padding: 0 1px;
+    }
+
+    .time-input-group .time-ampm {
+      color: #4a90d9;
+      font-size: 11px;
+      padding: 4px 4px 4px 2px;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 600;
+      outline: none;
+      border-radius: 2px;
+    }
+
+    .time-input-group .time-ampm:hover {
+      color: #6ba3e0;
+    }
+
+    .time-input-group .time-ampm:focus {
+      outline: 1px solid #4a90d9;
+      background: rgba(74,144,217,0.2);
+    }
+
+    .task-time-separator {
+      color: #666;
+    }
+
+    .task-delete {
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: transparent;
+      color: #ff6b6b;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .task-delete:hover {
+      background: rgba(255,107,107,0.2);
+    }
+
+    /* Task Validation Icons */
+    .task-warnings {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+      width: 36px;
+      justify-content: flex-end;
+    }
+
+    .task-warning {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: help;
+      position: relative;
+    }
+
+    .task-warning.out-of-bounds {
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 14px solid #ff6b6b;
+      position: relative;
+    }
+
+    .task-warning.out-of-bounds::after {
+      content: '!';
+      position: absolute;
+      top: 3px;
+      left: -2px;
+      color: #fff;
+      font-size: 9px;
+      font-weight: bold;
+    }
+
+    .task-warning.overlapping {
+      background: #ff9f43;
+      border-radius: 50%;
+      color: #fff;
+    }
+
+    .task-warning .tooltip {
+      position: fixed;
+      background: #222;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: normal;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s, visibility 0.2s;
+      z-index: 1001;
+      pointer-events: none;
+    }
+
+    .task-warning .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: #222;
+    }
+
+    .task-warning:hover .tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .task-warning .tooltip.tooltip-below::after {
+      top: auto;
+      bottom: 100%;
+      border-top-color: transparent;
+      border-bottom-color: #222;
+    }
+
+    .add-task-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      background: transparent;
+      border: 2px dashed #444;
+      border-radius: 8px;
+      color: #888;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .add-task-btn:hover {
+      border-color: #4a90d9;
+      color: #4a90d9;
+      background: rgba(74,144,217,0.1);
+    }
+
+    .add-task-btn .plus-icon {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    /* Color Picker Popup */
+    .color-picker-popup {
+      position: fixed;
+      background: #2a2a4a;
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      z-index: 1000;
+      display: none;
+    }
+
+    .color-picker-popup.visible {
+      display: block;
+    }
+
+    .color-picker-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 28px);
+      gap: 6px;
+    }
+
+    .color-option {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .color-option:hover {
+      transform: scale(1.1);
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    .color-option.selected {
+      border-color: #fff;
+    }
+
+    /* Color Settings */
+    .color-setting {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: #252540;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .color-box {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 2px solid rgba(255,255,255,0.2);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: border-color 0.2s;
+    }
+
+    .color-box:hover {
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    .color-setting-label {
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    /* Palette Dropdown */
+    .palette-setting {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      background: #252540;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .palette-setting-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .palette-label {
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    .palette-hint {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .palette-dropdown {
+      position: relative;
+      flex: 1;
+    }
+
+    .palette-selected {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid #444;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .palette-selected:hover {
+      border-color: #4a90d9;
+    }
+
+    .palette-preview {
+      display: flex;
+      gap: 3px;
+    }
+
+    .palette-preview-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+    }
+
+    .palette-name {
+      flex: 1;
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .palette-arrow {
+      font-size: 10px;
+      color: #888;
+      transition: transform 0.2s;
+    }
+
+    .palette-dropdown.open .palette-arrow {
+      transform: rotate(180deg);
+    }
+
+    .palette-options {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: #2a2a4a;
+      border: 1px solid #444;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 100;
+      display: none;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .palette-options::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .palette-options::-webkit-scrollbar-thumb {
+      border-radius: 3px;
+    }
+
+    .palette-dropdown.open .palette-options {
+      display: block;
+    }
+
+    .palette-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .palette-option:hover {
+      background: rgba(74,144,217,0.2);
+    }
+
+    .palette-option.selected {
+      background: rgba(74,144,217,0.3);
+    }
+
+    .palette-option .palette-preview {
+      display: flex;
+      gap: 3px;
+    }
+
+    .palette-option-name {
+      font-size: 13px;
+      color: #fff;
+    }
+
+    /* Expandable Section */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      padding: 8px 0;
+      user-select: none;
+    }
+
+    .section-header:hover .section-title {
+      color: #aaa;
+    }
+
+    .section-arrow {
+      font-size: 12px;
+      color: #888;
+      transition: transform 0.2s;
+    }
+
+    .section.collapsed .section-arrow {
+      transform: rotate(-90deg);
+    }
+
+    .section.collapsed .section-content {
+      display: none;
+    }
+
+    .section-content {
+      margin-top: 8px;
+    }
+
+    /* Position Settings */
+    .position-instruction {
+      font-size: 13px;
+      color: #888;
+      padding: 12px;
+      background: rgba(74, 144, 217, 0.1);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .anchor-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      max-width: 220px;
+      margin: 0 auto;
+    }
+
+    .anchor-btn {
+      aspect-ratio: 1;
+      background: #252540;
+      border: 2px solid #444;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .anchor-btn:hover {
+      border-color: #4a90d9;
+      background: rgba(74, 144, 217, 0.1);
+    }
+
+    .anchor-btn.selected {
+      border-color: #4a90d9;
+      background: rgba(74, 144, 217, 0.2);
+    }
+
+    .anchor-dot {
+      width: 12px;
+      height: 12px;
+      background: #4a90d9;
+      border-radius: 50%;
+    }
+
+    .anchor-btn:hover .anchor-dot {
+      transform: scale(1.2);
+    }
+
+    .anchor-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      max-width: 220px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .anchor-label {
+      font-size: 11px;
+      color: #666;
+      text-transform: uppercase;
+    }
+
+    .position-custom {
+      margin-top: 16px;
+      padding: 12px;
+      background: #252540;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .position-custom-label {
+      font-size: 13px;
+      color: #888;
+    }
+
+    .position-custom-value {
+      font-size: 13px;
+      color: #4a90d9;
+    }
+
+    /* Rotation Input */
+    .rotation-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .rotation-container label {
+      min-width: 80px;
+    }
+
+    .rotation-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .rotation-input {
+      width: 70px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid #444;
+      color: #fff;
+      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-align: center;
+      outline: none;
+      cursor: ew-resize;
+      user-select: none;
+    }
+
+    .rotation-input:focus {
+      border-color: #4a90d9;
+      background: rgba(74,144,217,0.1);
+      cursor: text;
+    }
+
+    .rotation-input::-webkit-inner-spin-button,
+    .rotation-input::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .rotation-unit {
+      color: #888;
+      font-size: 14px;
+    }
+
+    .rotation-hint {
+      font-size: 11px;
+      color: #666;
+      margin-top: 4px;
+      padding-left: 92px;
+    }
+
+    /* General Settings */
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      background: #252540;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .setting-label {
+      font-size: 14px;
+      color: #eee;
+    }
+
+    .setting-description {
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 48px;
+      height: 26px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #444;
+      transition: 0.3s;
+      border-radius: 26px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background-color: #4a90d9;
+    }
+
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(22px);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <div class="logo-ring"></div>
+      <h1>DayRing</h1>
+    </div>
+    <button class="header-close" id="header-close" title="Close">&times;</button>
+  </div>
+
+  <div class="content">
+    <div class="section">
+      <div class="section-title">Appearance</div>
+      <div class="slider-container">
+        <label>Opacity</label>
+        <input type="range" id="opacity-slider" min="0" max="100" value="80">
+        <span class="slider-value" id="opacity-value">80%</span>
+      </div>
+      <div class="slider-container" style="margin-top: 12px;">
+        <label>Size</label>
+        <input type="range" id="size-slider" min="100" max="300" value="200">
+        <span class="slider-value" id="size-value">200px</span>
+      </div>
+      <div class="rotation-container">
+        <label>Rotation</label>
+        <div class="rotation-input-wrapper">
+          <input type="number" class="rotation-input" id="rotation-input" min="0" max="359" value="0">
+          <span class="rotation-unit">°</span>
+        </div>
+      </div>
+      <div class="rotation-hint">Drag left/right to adjust, or type a value (0–359)</div>
+      <div class="setting-row" style="margin-top: 12px;">
+        <div>
+          <div class="setting-label">Show time remaining</div>
+          <div class="setting-description">Display "x hrs remaining" in center of annulus</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="show-time-remaining-toggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Schedule</div>
+      <div class="time-setting">
+        <span class="time-setting-label">Wake Time</span>
+        <div class="time-picker-compact" id="wake-picker">
+          <div class="picker-col">
+            <button class="picker-btn-sm" data-type="wake" data-field="hour" data-dir="1">▲</button>
+            <div class="picker-val" id="wake-hour">7</div>
+            <button class="picker-btn-sm" data-type="wake" data-field="hour" data-dir="-1">▼</button>
+          </div>
+          <span class="time-separator">:</span>
+          <div class="picker-col">
+            <button class="picker-btn-sm" data-type="wake" data-field="minute" data-dir="1">▲</button>
+            <div class="picker-val" id="wake-minute">00</div>
+            <button class="picker-btn-sm" data-type="wake" data-field="minute" data-dir="-1">▼</button>
+          </div>
+          <div class="picker-col ampm">
+            <button class="picker-btn-sm" data-type="wake" data-field="ampm" data-dir="1">▲</button>
+            <div class="picker-val" id="wake-ampm">AM</div>
+            <button class="picker-btn-sm" data-type="wake" data-field="ampm" data-dir="-1">▼</button>
+          </div>
+        </div>
+      </div>
+      <div class="time-setting">
+        <span class="time-setting-label">Sleep Time</span>
+        <div class="time-picker-compact" id="sleep-picker">
+          <div class="picker-col">
+            <button class="picker-btn-sm" data-type="sleep" data-field="hour" data-dir="1">▲</button>
+            <div class="picker-val" id="sleep-hour">11</div>
+            <button class="picker-btn-sm" data-type="sleep" data-field="hour" data-dir="-1">▼</button>
+          </div>
+          <span class="time-separator">:</span>
+          <div class="picker-col">
+            <button class="picker-btn-sm" data-type="sleep" data-field="minute" data-dir="1">▲</button>
+            <div class="picker-val" id="sleep-minute">00</div>
+            <button class="picker-btn-sm" data-type="sleep" data-field="minute" data-dir="-1">▼</button>
+          </div>
+          <div class="picker-col ampm">
+            <button class="picker-btn-sm" data-type="sleep" data-field="ampm" data-dir="1">▲</button>
+            <div class="picker-val" id="sleep-ampm">PM</div>
+            <button class="picker-btn-sm" data-type="sleep" data-field="ampm" data-dir="-1">▼</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Tasks</div>
+      <div class="task-list" id="task-list">
+        <!-- Tasks rendered here -->
+      </div>
+      <button class="add-task-btn" id="add-task-btn">
+        <span class="plus-icon">+</span>
+        <span>Add Task</span>
+      </button>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Colors</div>
+      <div class="palette-setting">
+        <div class="palette-setting-left">
+          <label class="palette-label">Color Palette</label>
+          <span class="palette-hint">Applies to all colors below and task colors</span>
+        </div>
+        <div class="palette-dropdown" id="palette-dropdown">
+          <div class="palette-selected" id="palette-selected">
+            <div class="palette-preview" id="palette-preview"></div>
+            <span class="palette-name" id="palette-name">Ocean</span>
+            <span class="palette-arrow">▼</span>
+          </div>
+          <div class="palette-options" id="palette-options"></div>
+        </div>
+      </div>
+      <div class="color-setting">
+        <div class="color-box" id="unallocated-color" style="background: #4a90d9"></div>
+        <span class="color-setting-label">Unallocated time</span>
+      </div>
+      <div class="color-setting">
+        <div class="color-box" id="passed-time-color" style="background: #666666"></div>
+        <span class="color-setting-label">Passed time</span>
+      </div>
+    </div>
+
+    <div class="section" id="position-section">
+      <div class="section-header" onclick="togglePositionSection()">
+        <div class="section-title">Position</div>
+        <span class="section-arrow">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="position-instruction">
+          While this window is open, you can drag the annulus to any position on screen. Or select a preset anchor below.
+        </div>
+        <div class="anchor-grid" id="anchor-grid">
+          <button class="anchor-btn" data-anchor="top-left" title="Top Left">
+            <div class="anchor-dot"></div>
+          </button>
+          <button class="anchor-btn" data-anchor="top-center" title="Top Center">
+            <div class="anchor-dot"></div>
+          </button>
+          <button class="anchor-btn" data-anchor="top-right" title="Top Right">
+            <div class="anchor-dot"></div>
+          </button>
+          <button class="anchor-btn" data-anchor="middle-left" title="Middle Left">
+            <div class="anchor-dot"></div>
+          </button>
+          <button class="anchor-btn" data-anchor="center" title="Center">
+            <div class="anchor-dot"></div>
+          </button>
+          <button class="anchor-btn" data-anchor="middle-right" title="Middle Right">
+            <div class="anchor-dot"></div>
+          </button>
+          <button class="anchor-btn" data-anchor="bottom-left" title="Bottom Left">
+            <div class="anchor-dot"></div>
+          </button>
+          <button class="anchor-btn" data-anchor="bottom-center" title="Bottom Center">
+            <div class="anchor-dot"></div>
+          </button>
+          <button class="anchor-btn" data-anchor="bottom-right" title="Bottom Right">
+            <div class="anchor-dot"></div>
+          </button>
+        </div>
+        <div class="position-custom" id="position-custom">
+          <span class="position-custom-label">Current position</span>
+          <span class="position-custom-value" id="position-value">Top Right</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">General</div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Start at login</div>
+          <div class="setting-description">Automatically launch DayRing when you log in</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="auto-start-toggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Color Picker Popup -->
+  <div class="color-picker-popup" id="color-picker-popup">
+    <div class="color-picker-grid" id="color-picker-grid"></div>
+  </div>
+
+  <script>
+    const opacitySlider = document.getElementById('opacity-slider');
+    const opacityValue = document.getElementById('opacity-value');
+    const sizeSlider = document.getElementById('size-slider');
+    const sizeValue = document.getElementById('size-value');
+    const rotationInput = document.getElementById('rotation-input');
+    const taskListEl = document.getElementById('task-list');
+    const addTaskBtn = document.getElementById('add-task-btn');
+    const colorPickerPopup = document.getElementById('color-picker-popup');
+    const colorPickerGrid = document.getElementById('color-picker-grid');
+    const unallocatedColorBox = document.getElementById('unallocated-color');
+    const passedTimeColorBox = document.getElementById('passed-time-color');
+    const paletteDropdown = document.getElementById('palette-dropdown');
+    const paletteSelected = document.getElementById('palette-selected');
+    const palettePreview = document.getElementById('palette-preview');
+    const paletteName = document.getElementById('palette-name');
+    const paletteOptions = document.getElementById('palette-options');
+
+    // Default color palette for tasks
+    const colorPalette = [
+      '#ff6b6b', '#ff9f43', '#feca57', '#48dbfb', '#1dd1a1', '#5f27cd',
+      '#ee5a24', '#f368e0', '#54a0ff', '#00d2d3', '#10ac84', '#341f97',
+      '#c8d6e5', '#8395a7', '#576574', '#222f3e', '#ff6b6b', '#ffeaa7'
+    ];
+
+    // Color palettes for the dropdown
+    const colorPalettes = {
+      ocean: {
+        name: 'Ocean',
+        unallocated: '#4a90d9',
+        passed: '#666666',
+        tasks: ['#48dbfb', '#00d2d3', '#92deff', '#1dd1a1', '#0abde3', '#10ac84']
+      },
+      sunset: {
+        name: 'Sunset',
+        unallocated: '#ff9f43',
+        passed: '#555555',
+        tasks: ['#ff6b6b', '#ff8557', '#feca57', '#ee5a24', '#f67f7f', '#fc7991']
+      },
+      forest: {
+        name: 'Forest',
+        unallocated: '#10ac84',
+        passed: '#444444',
+        tasks: ['#1dd1a1', '#996041', '#26de81', '#20bf6b', '#20d3ca', '#2bcbba']
+      },
+      lavender: {
+        name: 'Lavender',
+        unallocated: '#a29bfe',
+        passed: '#636e72',
+        tasks: ['#a557c3', '#6c5ce7', '#fd79a8', '#e84393', '#74b9ff', '#0984e3']
+      },
+      midnight: {
+        name: 'Midnight',
+        unallocated: '#576574',
+        passed: '#333333',
+        tasks: ['#8395a7', '#36495e', '#182d43', '#5c87bb', '#705d96', '#463d71']
+      },
+      coral: {
+        name: 'Coral',
+        unallocated: '#ff7675',
+        passed: '#636e72',
+        tasks: ['#fab1a0', '#ffeaa7', '#fdcb6e', '#fffb78', '#a8fbb7', '#a7dcfa']
+      }
+    };
+
+    // Default tasks
+    const defaultTasks = [
+      { id: 1, name: 'Breakfast', startTime: '8:30 AM', endTime: '9:00 AM', color: '#ff9f43' },
+      { id: 2, name: 'Lunch', startTime: '12:00 PM', endTime: '12:30 PM', color: '#48dbfb' },
+      { id: 3, name: 'Dinner', startTime: '6:00 PM', endTime: '6:30 PM', color: '#1dd1a1' }
+    ];
+
+    let tasks = [];
+    let nextTaskId = 4;
+    let activeColorPicker = null;
+    let wakeTime = { hour: 7, minute: 0 };
+    let sleepTime = { hour: 23, minute: 0 };
+    let unallocatedColor = '#4a90d9';
+    let passedTimeColor = '#666666';
+    let selectedPalette = 'ocean';
+    // Schedule time picker state (12-hour format for display)
+    const scheduleState = {
+      wake: { hour: 7, minute: 0, ampm: 'AM' },
+      sleep: { hour: 11, minute: 0, ampm: 'PM' }
+    };
+
+    // Convert 24h to 12h format
+    function to12Hour(hour24) {
+      const ampm = hour24 >= 12 ? 'PM' : 'AM';
+      let hour12 = hour24 % 12;
+      if (hour12 === 0) hour12 = 12;
+      return { hour: hour12, ampm };
+    }
+
+    // Convert 12h to 24h format
+    function to24Hour(hour12, ampm) {
+      let hour24 = hour12;
+      if (ampm === 'PM' && hour12 !== 12) hour24 += 12;
+      if (ampm === 'AM' && hour12 === 12) hour24 = 0;
+      return hour24;
+    }
+
+    // Update schedule display from internal state
+    function updateScheduleDisplay() {
+      document.getElementById('wake-hour').textContent = scheduleState.wake.hour;
+      document.getElementById('wake-minute').textContent = scheduleState.wake.minute.toString().padStart(2, '0');
+      document.getElementById('wake-ampm').textContent = scheduleState.wake.ampm;
+
+      document.getElementById('sleep-hour').textContent = scheduleState.sleep.hour;
+      document.getElementById('sleep-minute').textContent = scheduleState.sleep.minute.toString().padStart(2, '0');
+      document.getElementById('sleep-ampm').textContent = scheduleState.sleep.ampm;
+    }
+
+    // Handle schedule time adjustment
+    function adjustScheduleTime(type, field, delta) {
+      const state = scheduleState[type];
+
+      if (field === 'hour') {
+        const oldHour = state.hour;
+        state.hour += delta;
+
+        // Toggle AM/PM when crossing 12 boundary
+        // Going up: 11 -> 12 means we cross noon/midnight, toggle AM/PM
+        // Going down: 12 -> 11 means we cross noon/midnight, toggle AM/PM
+        if (delta > 0 && oldHour === 11 && state.hour === 12) {
+          // 11 AM -> 12 PM or 11 PM -> 12 AM
+          state.ampm = state.ampm === 'AM' ? 'PM' : 'AM';
+        } else if (delta < 0 && oldHour === 12 && state.hour === 11) {
+          // 12 PM -> 11 AM or 12 AM -> 11 PM
+          state.ampm = state.ampm === 'AM' ? 'PM' : 'AM';
+        }
+
+        // Wrap hour value
+        if (state.hour > 12) state.hour = 1;
+        if (state.hour < 1) state.hour = 12;
+      } else if (field === 'minute') {
+        state.minute += delta * 5; // 5-minute increments
+
+        if (state.minute >= 60) {
+          state.minute = 0;
+          // Also increment hour when minutes wrap from 55 to 00
+          const oldHour = state.hour;
+          state.hour++;
+          if (state.hour > 12) state.hour = 1;
+          // Toggle AM/PM when crossing 12 boundary (11→12)
+          if (oldHour === 11 && state.hour === 12) {
+            state.ampm = state.ampm === 'AM' ? 'PM' : 'AM';
+          }
+        } else if (state.minute < 0) {
+          state.minute = 55;
+          // Also decrement hour when minutes wrap from 00 to 55
+          const oldHour = state.hour;
+          state.hour--;
+          if (state.hour < 1) state.hour = 12;
+          // Toggle AM/PM when crossing 12 boundary (12→11)
+          if (oldHour === 12 && state.hour === 11) {
+            state.ampm = state.ampm === 'AM' ? 'PM' : 'AM';
+          }
+        }
+      } else if (field === 'ampm') {
+        state.ampm = state.ampm === 'AM' ? 'PM' : 'AM';
+      }
+
+      updateScheduleDisplay();
+      saveSchedule();
+    }
+
+    // Save schedule to settings
+    function saveSchedule() {
+      const wakeHour24 = to24Hour(scheduleState.wake.hour, scheduleState.wake.ampm);
+      const sleepHour24 = to24Hour(scheduleState.sleep.hour, scheduleState.sleep.ampm);
+
+      wakeTime = { hour: wakeHour24, minute: scheduleState.wake.minute };
+      sleepTime = { hour: sleepHour24, minute: scheduleState.sleep.minute };
+
+      if (window.dayring) {
+        window.dayring.saveSettings({ wakeTime, sleepTime });
+      }
+
+      // Re-render tasks to update validation
+      renderTasks();
+    }
+
+    // Initialize schedule picker button handlers
+    function initSchedulePickers() {
+      document.querySelectorAll('.picker-btn-sm').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const type = btn.dataset.type;
+          const field = btn.dataset.field;
+          const dir = parseInt(btn.dataset.dir, 10);
+          adjustScheduleTime(type, field, dir);
+        });
+      });
+    }
+
+    // Parse time string to object
+    function parseTime(timeStr) {
+      const match = timeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+      if (!match) return null;
+      let hour = parseInt(match[1], 10);
+      const minute = parseInt(match[2], 10);
+      const period = match[3].toUpperCase();
+
+      if (period === 'PM' && hour !== 12) hour += 12;
+      if (period === 'AM' && hour === 12) hour = 0;
+
+      return { hour, minute };
+    }
+
+    // Format time object to string
+    function formatTime(hour, minute) {
+      const period = hour >= 12 ? 'PM' : 'AM';
+      const displayHour = hour % 12 || 12;
+      const displayMinute = minute.toString().padStart(2, '0');
+      return `${displayHour}:${displayMinute} ${period}`;
+    }
+
+    // Sort tasks chronologically
+    function sortTasks() {
+      tasks.sort((a, b) => {
+        const timeA = parseTime(a.startTime);
+        const timeB = parseTime(b.startTime);
+        if (!timeA || !timeB) return 0;
+        return (timeA.hour * 60 + timeA.minute) - (timeB.hour * 60 + timeB.minute);
+      });
+    }
+
+    // Convert time to minutes from midnight
+    function timeToMinutes(time) {
+      if (!time) return null;
+      return time.hour * 60 + time.minute;
+    }
+
+    // Check if task is outside waking hours
+    function isOutOfBounds(task) {
+      const start = parseTime(task.startTime);
+      const end = parseTime(task.endTime);
+      if (!start || !end) return false;
+
+      const wakeMinutes = timeToMinutes(wakeTime);
+      let sleepMinutes = timeToMinutes(sleepTime);
+      const isNextDaySleep = sleepMinutes <= wakeMinutes;
+      if (isNextDaySleep) sleepMinutes += 24 * 60;
+
+      let startMinutes = timeToMinutes(start);
+      let endMinutes = timeToMinutes(end);
+
+      // Handle overnight tasks (end time before start time means task spans midnight)
+      if (endMinutes < startMinutes) {
+        endMinutes += 24 * 60;
+      }
+
+      // When sleep is next-day (e.g. wake 8AM, sleep 2AM), times before wake are "after midnight" in the span
+      if (isNextDaySleep) {
+        if (startMinutes < wakeMinutes) startMinutes += 24 * 60;
+        if (endMinutes < wakeMinutes) endMinutes += 24 * 60;
+      }
+
+      // Task starts before wake or ends after sleep
+      return startMinutes < wakeMinutes || endMinutes > sleepMinutes;
+    }
+
+    // Check if task overlaps with other tasks
+    function isOverlapping(task) {
+      const start = parseTime(task.startTime);
+      const end = parseTime(task.endTime);
+      if (!start || !end) return false;
+
+      const startMinutes = timeToMinutes(start);
+      const endMinutes = timeToMinutes(end);
+
+      for (const other of tasks) {
+        if (other.id === task.id) continue;
+
+        const otherStart = parseTime(other.startTime);
+        const otherEnd = parseTime(other.endTime);
+        if (!otherStart || !otherEnd) continue;
+
+        const otherStartMinutes = timeToMinutes(otherStart);
+        const otherEndMinutes = timeToMinutes(otherEnd);
+
+        // Check overlap: task overlaps if NOT (ends before other starts OR starts after other ends)
+        if (!(endMinutes <= otherStartMinutes || startMinutes >= otherEndMinutes)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // Render single task
+    function createTaskElement(task) {
+      const div = document.createElement('div');
+      div.className = 'task-item';
+      div.dataset.id = task.id;
+
+      // Check for warnings
+      const outOfBounds = isOutOfBounds(task);
+      const overlapping = isOverlapping(task);
+
+      // Build warning icons HTML
+      let warningsHtml = '<div class="task-warnings">';
+      if (outOfBounds) {
+        warningsHtml += `<div class="task-warning out-of-bounds"><span class="tooltip">Task is outside waking hours</span></div>`;
+      }
+      if (overlapping) {
+        warningsHtml += `<div class="task-warning overlapping">!<span class="tooltip">Task overlaps with another task</span></div>`;
+      }
+      warningsHtml += '</div>';
+
+      // Parse times for smart input
+      const startParsed = parseTime(task.startTime) || { hour: 8, minute: 0 };
+      const endParsed = parseTime(task.endTime) || { hour: 9, minute: 0 };
+      const start12 = to12Hour(startParsed.hour);
+      const end12 = to12Hour(endParsed.hour);
+
+      div.innerHTML = `
+        ${warningsHtml}
+        <div class="task-color" style="background: ${task.color}" data-color="${task.color}"></div>
+        <input type="text" class="task-name" value="${task.name}" placeholder="Task name">
+        <div class="task-time">
+          <div class="time-input-group task-start-group" data-prev-time="${task.startTime}">
+            <input type="text" class="time-part time-hour" value="${start12.hour}" maxlength="2" data-field="hour">
+            <span class="time-colon">:</span>
+            <input type="text" class="time-part time-minute" value="${startParsed.minute.toString().padStart(2, '0')}" maxlength="2" data-field="minute">
+            <span class="time-ampm" tabindex="0">${start12.ampm}</span>
+          </div>
+          <span class="task-time-separator">–</span>
+          <div class="time-input-group task-end-group" data-prev-time="${task.endTime}">
+            <input type="text" class="time-part time-hour" value="${end12.hour}" maxlength="2" data-field="hour">
+            <span class="time-colon">:</span>
+            <input type="text" class="time-part time-minute" value="${endParsed.minute.toString().padStart(2, '0')}" maxlength="2" data-field="minute">
+            <span class="time-ampm" tabindex="0">${end12.ampm}</span>
+          </div>
+        </div>
+        <button class="task-delete">×</button>
+      `;
+
+      // Color picker handler
+      const colorBox = div.querySelector('.task-color');
+      colorBox.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showColorPicker(colorBox, task);
+      });
+
+      // Name change handler
+      const nameInput = div.querySelector('.task-name');
+      nameInput.addEventListener('change', () => {
+        task.name = nameInput.value;
+        saveTasks();
+      });
+      nameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          nameInput.blur();
+          saveTasks();
+        }
+        // Tab to start time hour field
+        if (e.key === 'Tab' && !e.shiftKey) {
+          e.preventDefault();
+          const startHourInput = div.querySelector('.task-start-group .time-hour');
+          if (startHourInput) {
+            startHourInput.focus();
+            startHourInput.select();
+          }
+        }
+        // Shift+Tab to previous task's end time AM/PM
+        if (e.key === 'Tab' && e.shiftKey) {
+          const prevTaskEl = div.previousElementSibling;
+          if (prevTaskEl && prevTaskEl.classList.contains('task-item')) {
+            e.preventDefault();
+            const prevAmpm = prevTaskEl.querySelector('.task-end-group .time-ampm');
+            if (prevAmpm) prevAmpm.focus();
+          }
+          // If no previous task, let default tab behavior happen (go to elements before task list)
+        }
+      });
+
+      // Smart time input handlers
+      const startGroup = div.querySelector('.task-start-group');
+      const endGroup = div.querySelector('.task-end-group');
+
+      function setupTimeInputGroup(group, isStart, endGroup, taskEl) {
+        const hourInput = group.querySelector('.time-hour');
+        const minuteInput = group.querySelector('.time-minute');
+        const ampmSpan = group.querySelector('.time-ampm');
+
+        // Track where Tab/Shift+Tab is navigating to within this group
+        let tabTargetField = null;
+
+        // Get time string from group
+        function getTimeFromGroup() {
+          const hour = parseInt(hourInput.value, 10) || 12;
+          const minute = parseInt(minuteInput.value, 10) || 0;
+          const ampm = ampmSpan.textContent;
+          return formatTime(to24Hour(hour, ampm), minute);
+        }
+
+        // Validate and update task
+        // sourceField: 'hour', 'minute', or 'ampm' - which field triggered this validation
+        function validateAndSave(sourceField) {
+          const hour = parseInt(hourInput.value, 10);
+          const minute = parseInt(minuteInput.value, 10);
+
+          // Validate hour (1-12)
+          if (isNaN(hour) || hour < 1 || hour > 12) {
+            // Reset to previous value
+            const prevTime = parseTime(group.dataset.prevTime);
+            if (prevTime) {
+              const prev12 = to12Hour(prevTime.hour);
+              hourInput.value = prev12.hour;
+            } else {
+              hourInput.value = '12';
+            }
+          }
+
+          // Validate minute (0-59)
+          if (isNaN(minute) || minute < 0 || minute > 59) {
+            const prevTime = parseTime(group.dataset.prevTime);
+            minuteInput.value = prevTime ? prevTime.minute.toString().padStart(2, '0') : '00';
+          } else {
+            minuteInput.value = minute.toString().padStart(2, '0');
+          }
+
+          // Update task and save only if time changed
+          const newTime = getTimeFromGroup();
+          const oldTime = group.dataset.prevTime;
+
+          // Capture and clear tabTargetField before any re-rendering
+          const targetField = tabTargetField;
+          tabTargetField = null;
+
+          if (newTime !== oldTime) {
+            group.dataset.prevTime = newTime;
+
+            // Determine which field to restore focus to after re-rendering
+            // Priority: tabTargetField (Tab navigation) > sourceField (arrow keys, toggle)
+            let focusField = targetField || sourceField;
+
+            if (isStart) {
+              task.startTime = newTime;
+              sortTasks();
+              renderTasks();
+            } else {
+              task.endTime = newTime;
+              renderTasks();
+            }
+            saveTasks();
+
+            // Restore focus to the appropriate field in the same task (by ID) after re-render
+            if (focusField) {
+              const newTaskEl = taskListEl.querySelector(`.task-item[data-id="${task.id}"]`);
+              if (newTaskEl) {
+                const groupSelector = isStart ? '.task-start-group' : '.task-end-group';
+                let elementToFocus;
+                if (focusField === 'hour') {
+                  elementToFocus = newTaskEl.querySelector(`${groupSelector} .time-hour`);
+                } else if (focusField === 'minute') {
+                  elementToFocus = newTaskEl.querySelector(`${groupSelector} .time-minute`);
+                } else if (focusField === 'ampm') {
+                  elementToFocus = newTaskEl.querySelector(`${groupSelector} .time-ampm`);
+                }
+                if (elementToFocus) elementToFocus.focus();
+              }
+            }
+          }
+        }
+
+        // Handle hour input
+        hourInput.addEventListener('keydown', (e) => {
+          // Arrow keys for increment/decrement
+          if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            let hour = parseInt(hourInput.value, 10) || 12;
+            const oldHour = hour;
+            if (e.key === 'ArrowUp') {
+              hour++;
+              if (hour > 12) hour = 1;
+            } else {
+              hour--;
+              if (hour < 1) hour = 12;
+            }
+            // Toggle AM/PM when crossing 12 boundary
+            if ((oldHour === 11 && hour === 12) || (oldHour === 12 && hour === 11)) {
+              ampmSpan.textContent = ampmSpan.textContent === 'AM' ? 'PM' : 'AM';
+            }
+            hourInput.value = hour;
+            validateAndSave('hour');
+            return;
+          }
+          // Tab to minute field
+          if (e.key === 'Tab' && !e.shiftKey) {
+            e.preventDefault();
+            tabTargetField = 'minute';
+            minuteInput.focus();
+            minuteInput.select();
+            return;
+          }
+          // Shift+Tab: navigate backward
+          if (e.key === 'Tab' && e.shiftKey) {
+            e.preventDefault();
+            if (isStart && taskEl) {
+              // From start time hour, go back to task name
+              const nameInput = taskEl.querySelector('.task-name');
+              if (nameInput) nameInput.focus();
+            } else if (!isStart && taskEl) {
+              // From end time hour, go back to start time AM/PM
+              const startAmpm = taskEl.querySelector('.task-start-group .time-ampm');
+              if (startAmpm) startAmpm.focus();
+            }
+            return;
+          }
+          // Enter to blur
+          if (e.key === 'Enter') {
+            hourInput.blur();
+            return;
+          }
+          // Allow: backspace, delete, escape, arrow left/right
+          if ([8, 27, 37, 39, 46].includes(e.keyCode)) {
+            return;
+          }
+          // Allow numbers only
+          if (!/^\d$/.test(e.key)) {
+            e.preventDefault();
+          }
+        });
+
+        // Handle minute input
+        minuteInput.addEventListener('keydown', (e) => {
+          // Arrow keys for increment/decrement by 15
+          if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            let minute = parseInt(minuteInput.value, 10) || 0;
+            if (e.key === 'ArrowUp') {
+              minute += 15;
+              if (minute >= 60) minute = 0;
+            } else {
+              minute -= 15;
+              if (minute < 0) minute = 45;
+            }
+            minuteInput.value = minute.toString().padStart(2, '0');
+            validateAndSave('minute');
+            return;
+          }
+          // Tab to AM/PM field
+          if (e.key === 'Tab' && !e.shiftKey) {
+            e.preventDefault();
+            tabTargetField = 'ampm';
+            ampmSpan.focus();
+            return;
+          }
+          // Shift+Tab to hour field
+          if (e.key === 'Tab' && e.shiftKey) {
+            e.preventDefault();
+            tabTargetField = 'hour';
+            hourInput.focus();
+            hourInput.select();
+            return;
+          }
+          // Enter to blur
+          if (e.key === 'Enter') {
+            minuteInput.blur();
+            return;
+          }
+          // Allow: backspace, delete, escape, arrow left/right
+          if ([8, 27, 37, 39, 46].includes(e.keyCode)) {
+            return;
+          }
+          // Allow numbers only
+          if (!/^\d$/.test(e.key)) {
+            e.preventDefault();
+          }
+        });
+
+        // Auto-advance from hour to minute when 2 digits entered
+        hourInput.addEventListener('input', () => {
+          if (hourInput.value.length === 2) {
+            tabTargetField = 'minute';
+            minuteInput.focus();
+            minuteInput.select();
+          }
+        });
+
+        hourInput.addEventListener('blur', () => validateAndSave());
+        hourInput.addEventListener('focus', () => hourInput.select());
+
+        minuteInput.addEventListener('blur', () => validateAndSave());
+        minuteInput.addEventListener('focus', () => minuteInput.select());
+
+        // AM/PM keyboard and click handling
+        ampmSpan.addEventListener('click', () => {
+          ampmSpan.textContent = ampmSpan.textContent === 'AM' ? 'PM' : 'AM';
+          validateAndSave('ampm');
+        });
+
+        ampmSpan.addEventListener('keydown', (e) => {
+          // Arrow keys or Space/Enter to toggle
+          if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            ampmSpan.textContent = ampmSpan.textContent === 'AM' ? 'PM' : 'AM';
+            validateAndSave('ampm');
+            return;
+          }
+          // Tab to next field
+          if (e.key === 'Tab' && !e.shiftKey) {
+            if (isStart && endGroup) {
+              // Tab from start time AM/PM to end time hour
+              e.preventDefault();
+              const endHourInput = endGroup.querySelector('.time-hour');
+              if (endHourInput) {
+                endHourInput.focus();
+                endHourInput.select();
+              }
+            } else if (!isStart && taskEl) {
+              // Tab from end time AM/PM to next task's name input
+              const nextTaskEl = taskEl.nextElementSibling;
+              if (nextTaskEl && nextTaskEl.classList.contains('task-item')) {
+                e.preventDefault();
+                const nextNameInput = nextTaskEl.querySelector('.task-name');
+                if (nextNameInput) nextNameInput.focus();
+              }
+              // If no next task, let default tab behavior continue (to "Add Task" button)
+            }
+            return;
+          }
+          // Shift+Tab to minute field
+          if (e.key === 'Tab' && e.shiftKey) {
+            e.preventDefault();
+            tabTargetField = 'minute';
+            minuteInput.focus();
+            minuteInput.select();
+            return;
+          }
+        });
+      }
+
+      setupTimeInputGroup(startGroup, true, endGroup, div);
+      setupTimeInputGroup(endGroup, false, null, div);
+
+      // Delete handler
+      const deleteBtn = div.querySelector('.task-delete');
+      deleteBtn.addEventListener('click', () => {
+        tasks = tasks.filter(t => t.id !== task.id);
+        renderTasks();
+        saveTasks();
+      });
+
+      // Tooltip positioning for warning icons (prevent clipping at window edges)
+      div.querySelectorAll('.task-warning').forEach(warning => {
+        const tooltip = warning.querySelector('.tooltip');
+        if (!tooltip) return;
+
+        warning.addEventListener('mouseenter', () => {
+          const rect = warning.getBoundingClientRect();
+          const tooltipRect = tooltip.getBoundingClientRect();
+
+          // Position tooltip above the warning icon
+          let top = rect.top - tooltipRect.height - 8;
+          let left = rect.left + rect.width / 2 - tooltipRect.width / 2;
+
+          // Prevent clipping at top of window - show below instead
+          if (top < 4) {
+            top = rect.bottom + 8;
+            tooltip.classList.add('tooltip-below');
+          } else {
+            tooltip.classList.remove('tooltip-below');
+          }
+
+          // Prevent clipping at left edge
+          if (left < 4) {
+            left = 4;
+          }
+          // Prevent clipping at right edge
+          if (left + tooltipRect.width > window.innerWidth - 4) {
+            left = window.innerWidth - tooltipRect.width - 4;
+          }
+
+          tooltip.style.top = `${top}px`;
+          tooltip.style.left = `${left}px`;
+        });
+      });
+
+      return div;
+    }
+
+    // Render all tasks
+    function renderTasks() {
+      taskListEl.innerHTML = '';
+      tasks.forEach(task => {
+        taskListEl.appendChild(createTaskElement(task));
+      });
+    }
+
+    // Show color picker
+    function showColorPicker(colorBox, task) {
+      activeColorPicker = { colorBox, task };
+
+      // Build color grid using current palette's task colors only
+      const palette = colorPalettes[selectedPalette];
+      const taskColors = palette ? palette.tasks : colorPalette;
+
+      colorPickerGrid.innerHTML = '';
+      taskColors.forEach(color => {
+        const option = document.createElement('div');
+        option.className = 'color-option' + (task.color === color ? ' selected' : '');
+        option.style.background = color;
+        option.addEventListener('click', () => {
+          task.color = color;
+          colorBox.style.background = color;
+          colorBox.dataset.color = color;
+          hideColorPicker();
+          saveTasks();
+        });
+        colorPickerGrid.appendChild(option);
+      });
+
+      // Position popup near color box
+      const rect = colorBox.getBoundingClientRect();
+      colorPickerPopup.style.left = `${rect.left}px`;
+      colorPickerPopup.style.top = `${rect.bottom + 8}px`;
+      colorPickerPopup.classList.add('visible');
+    }
+
+    // Show color picker for settings (unallocated/passed time colors)
+    function showSettingsColorPicker(colorBox, currentColor, onSelect) {
+      activeColorPicker = { colorBox, isSettingsPicker: true, onSelect };
+
+      // Extended palette for unallocated/passed time (include greys)
+      const settingsPalette = [
+        '#ff6b6b', '#ff9f43', '#feca57', '#48dbfb', '#1dd1a1', '#5f27cd',
+        '#ee5a24', '#f368e0', '#54a0ff', '#00d2d3', '#10ac84', '#341f97',
+        '#4a90d9', '#6ba3e0', '#3498db', '#2980b9', '#1abc9c', '#16a085',
+        '#2c3e50', '#34495e', '#7f8c8d', '#95a5a6', '#bdc3c7', '#ecf0f1',
+        '#666666', '#888888', '#555555', '#333333', '#444444', '#999999'
+      ];
+
+      colorPickerGrid.innerHTML = '';
+      settingsPalette.forEach(color => {
+        const option = document.createElement('div');
+        option.className = 'color-option' + (currentColor === color ? ' selected' : '');
+        option.style.background = color;
+        option.addEventListener('click', () => {
+          colorBox.style.background = color;
+          hideColorPicker();
+          onSelect(color);
+        });
+        colorPickerGrid.appendChild(option);
+      });
+
+      const rect = colorBox.getBoundingClientRect();
+      colorPickerPopup.style.left = `${rect.left}px`;
+      colorPickerPopup.style.top = `${rect.bottom + 8}px`;
+      colorPickerPopup.classList.add('visible');
+    }
+
+    // Hide color picker
+    function hideColorPicker() {
+      colorPickerPopup.classList.remove('visible');
+      activeColorPicker = null;
+    }
+
+    // Close color picker on outside click
+    document.addEventListener('click', (e) => {
+      if (activeColorPicker && !colorPickerPopup.contains(e.target)) {
+        hideColorPicker();
+      }
+    });
+
+    // Add new task
+    addTaskBtn.addEventListener('click', () => {
+      // Use color from selected palette (cycle through palette task colors)
+      const palette = colorPalettes[selectedPalette];
+      const paletteTaskColors = palette ? palette.tasks : colorPalette;
+      const colorIndex = tasks.length % paletteTaskColors.length;
+
+      // Get current time rounded to nearest 30 minutes
+      const now = new Date();
+      let startMinutes = now.getHours() * 60 + now.getMinutes();
+      startMinutes = Math.round(startMinutes / 30) * 30; // Round to nearest 30
+      let endMinutes = startMinutes + 60; // 1 hour duration
+
+      // Handle day wrap (e.g., 11:30 PM + 1 hr = 12:30 AM)
+      if (endMinutes >= 24 * 60) endMinutes = 24 * 60 - 1; // Cap at 11:59 PM
+
+      // Convert minutes to 12h format string
+      function minutesToTimeStr(mins) {
+        let h = Math.floor(mins / 60);
+        const m = mins % 60;
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12;
+        if (h === 0) h = 12;
+        return `${h}:${m.toString().padStart(2, '0')} ${ampm}`;
+      }
+
+      const newTaskId = nextTaskId++;
+      const newTask = {
+        id: newTaskId,
+        name: '',
+        startTime: minutesToTimeStr(startMinutes),
+        endTime: minutesToTimeStr(endMinutes),
+        color: paletteTaskColors[colorIndex]
+      };
+      tasks.push(newTask);
+      sortTasks();
+      renderTasks();
+      saveTasks();
+
+      // Focus the new task's name input (find by ID since sorting may have moved it)
+      const newTaskEl = taskListEl.querySelector(`.task-item[data-id="${newTaskId}"]`);
+      if (newTaskEl) {
+        const nameInput = newTaskEl.querySelector('.task-name');
+        if (nameInput) nameInput.focus();
+      }
+    });
+
+    // Save tasks to settings
+    function saveTasks() {
+      if (window.dayring) {
+        window.dayring.saveSettings({ tasks });
+      }
+    }
+
+    // Create palette preview HTML
+    function createPalettePreview(palette) {
+      let html = '';
+      const colors = [palette.unallocated, palette.passed, ...palette.tasks.slice(0, 3)];
+      colors.forEach(color => {
+        html += `<div class="palette-preview-color" style="background: ${color}"></div>`;
+      });
+      return html;
+    }
+
+    // Update palette dropdown display
+    function updatePaletteDisplay() {
+      const palette = colorPalettes[selectedPalette];
+      palettePreview.innerHTML = createPalettePreview(palette);
+      paletteName.textContent = palette.name;
+    }
+
+    // Build palette options
+    function buildPaletteOptions() {
+      paletteOptions.innerHTML = '';
+      Object.entries(colorPalettes).forEach(([key, palette]) => {
+        const option = document.createElement('div');
+        option.className = 'palette-option' + (key === selectedPalette ? ' selected' : '');
+        option.innerHTML = `
+          <div class="palette-preview">${createPalettePreview(palette)}</div>
+          <span class="palette-option-name">${palette.name}</span>
+        `;
+        option.addEventListener('click', () => {
+          selectPalette(key);
+        });
+        paletteOptions.appendChild(option);
+      });
+    }
+
+    // Select a palette
+    function selectPalette(paletteKey) {
+      selectedPalette = paletteKey;
+      const palette = colorPalettes[paletteKey];
+
+      // Update colors
+      unallocatedColor = palette.unallocated;
+      passedTimeColor = palette.passed;
+      unallocatedColorBox.style.background = unallocatedColor;
+      passedTimeColorBox.style.background = passedTimeColor;
+
+      // Update all task colors from palette
+      tasks.forEach((task, index) => {
+        task.color = palette.tasks[index % palette.tasks.length];
+      });
+      renderTasks();
+
+      // Update display
+      updatePaletteDisplay();
+      paletteDropdown.classList.remove('open');
+
+      // Update option selection
+      document.querySelectorAll('.palette-option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      document.querySelector(`.palette-option:nth-child(${Object.keys(colorPalettes).indexOf(paletteKey) + 1})`)?.classList.add('selected');
+
+      // Save settings (include updated tasks)
+      if (window.dayring) {
+        window.dayring.saveSettings({
+          selectedPalette: paletteKey,
+          unallocatedColor,
+          passedTimeColor,
+          tasks
+        });
+      }
+    }
+
+    // Initialize palette dropdown
+    function initPaletteDropdown() {
+      buildPaletteOptions();
+      updatePaletteDisplay();
+
+      paletteSelected.addEventListener('click', (e) => {
+        e.stopPropagation();
+        paletteDropdown.classList.toggle('open');
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', () => {
+        paletteDropdown.classList.remove('open');
+      });
+    }
+
+    // Initialize color setting pickers
+    function initColorSettings() {
+      initPaletteDropdown();
+
+      unallocatedColorBox.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showSettingsColorPicker(unallocatedColorBox, unallocatedColor, (color) => {
+          unallocatedColor = color;
+          if (window.dayring) {
+            window.dayring.saveSettings({ unallocatedColor: color });
+          }
+        });
+      });
+
+      passedTimeColorBox.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showSettingsColorPicker(passedTimeColorBox, passedTimeColor, (color) => {
+          passedTimeColor = color;
+          if (window.dayring) {
+            window.dayring.saveSettings({ passedTimeColor: color });
+          }
+        });
+      });
+    }
+
+    // Load current settings
+    async function init() {
+      // Initialize schedule picker event listeners
+      initSchedulePickers();
+
+      // Initialize color setting pickers
+      initColorSettings();
+
+      if (window.dayring) {
+        try {
+          const settings = await window.dayring.getSettings();
+          if (settings.opacity !== undefined) {
+            opacitySlider.value = settings.opacity;
+            opacityValue.textContent = `${settings.opacity}%`;
+          }
+
+          if (settings.size !== undefined) {
+            sizeSlider.value = settings.size;
+            sizeValue.textContent = `${settings.size}px`;
+          }
+
+          if (settings.rotation !== undefined) {
+            rotationInput.value = settings.rotation;
+          }
+
+          // Load wake/sleep times for validation and display
+          if (settings.wakeTime) {
+            wakeTime = settings.wakeTime;
+            const wake12 = to12Hour(settings.wakeTime.hour);
+            scheduleState.wake = { hour: wake12.hour, minute: settings.wakeTime.minute, ampm: wake12.ampm };
+          }
+          if (settings.sleepTime) {
+            sleepTime = settings.sleepTime;
+            const sleep12 = to12Hour(settings.sleepTime.hour);
+            scheduleState.sleep = { hour: sleep12.hour, minute: settings.sleepTime.minute, ampm: sleep12.ampm };
+          }
+          updateScheduleDisplay();
+
+          // Load color settings
+          if (settings.selectedPalette && colorPalettes[settings.selectedPalette]) {
+            selectedPalette = settings.selectedPalette;
+          }
+          if (settings.unallocatedColor) {
+            unallocatedColor = settings.unallocatedColor;
+            unallocatedColorBox.style.background = unallocatedColor;
+          }
+          if (settings.passedTimeColor) {
+            passedTimeColor = settings.passedTimeColor;
+            passedTimeColorBox.style.background = passedTimeColor;
+          }
+          updatePaletteDisplay();
+          buildPaletteOptions();
+
+          // Load tasks or use defaults
+          if (settings.tasks && settings.tasks.length > 0) {
+            tasks = settings.tasks;
+            nextTaskId = Math.max(...tasks.map(t => t.id)) + 1;
+          } else {
+            tasks = [...defaultTasks];
+            // Save default tasks so they render on next app launch
+            saveTasks();
+          }
+          renderTasks();
+
+          // Load position settings
+          if (settings.position) {
+            if (settings.position.anchor) {
+              currentAnchor = settings.position.anchor;
+            }
+            if (settings.position.custom) {
+              customPosition = settings.position.custom;
+            }
+            updateAnchorSelection();
+          }
+
+          // Load auto-start setting
+          const autoStartToggle = document.getElementById('auto-start-toggle');
+          if (typeof settings.autoStart === 'boolean') {
+            autoStartToggle.checked = settings.autoStart;
+          }
+          // Load show time remaining setting
+          const showTimeRemainingToggle = document.getElementById('show-time-remaining-toggle');
+          if (typeof settings.showTimeRemaining === 'boolean') {
+            showTimeRemainingToggle.checked = settings.showTimeRemaining;
+          }
+        } catch (e) {
+          console.error('Failed to load settings:', e);
+          tasks = [...defaultTasks];
+          saveTasks();
+          renderTasks();
+        }
+      } else {
+        tasks = [...defaultTasks];
+        saveTasks();
+        renderTasks();
+        updateScheduleDisplay();
+      }
+    }
+
+    opacitySlider.addEventListener('input', (e) => {
+      const value = parseInt(e.target.value, 10);
+      opacityValue.textContent = `${value}%`;
+
+      // Save and update overlay in real-time
+      if (window.dayring) {
+        window.dayring.saveSettings({ opacity: value });
+      }
+    });
+
+    sizeSlider.addEventListener('input', (e) => {
+      const value = parseInt(e.target.value, 10);
+      sizeValue.textContent = `${value}px`;
+
+      // Save and update overlay in real-time
+      if (window.dayring) {
+        window.dayring.saveSettings({ size: value });
+      }
+    });
+
+    // Auto-start toggle
+    const autoStartToggle = document.getElementById('auto-start-toggle');
+    autoStartToggle.addEventListener('change', (e) => {
+      if (window.dayring && window.dayring.setAutoStart) {
+        window.dayring.setAutoStart(e.target.checked);
+      }
+    });
+
+    // Show time remaining toggle
+    const showTimeRemainingToggle = document.getElementById('show-time-remaining-toggle');
+    showTimeRemainingToggle.addEventListener('change', (e) => {
+      if (window.dayring) {
+        window.dayring.saveSettings({ showTimeRemaining: e.target.checked });
+      }
+    });
+
+    // Rotation input handling
+    let rotationDragState = null;
+    let rotationDragStarted = false;
+    const DRAG_THRESHOLD = 3; // pixels before drag starts
+
+    function updateRotation(value) {
+      // Clamp value to 0-359 range
+      let rotation = parseInt(value, 10) || 0;
+      if (rotation < 0) rotation = 0;
+      if (rotation > 359) rotation = 359;
+
+      rotationInput.value = rotation;
+
+      // Save and update overlay in real-time
+      if (window.dayring) {
+        window.dayring.saveSettings({ rotation });
+      }
+    }
+
+    rotationInput.addEventListener('change', (e) => {
+      updateRotation(e.target.value);
+    });
+
+    rotationInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        updateRotation(e.target.value);
+        rotationInput.blur();
+      }
+    });
+
+    // Allow typing when input is focused
+    rotationInput.addEventListener('input', (e) => {
+      // During typing, allow any value temporarily
+      // It will be clamped on blur/enter
+    });
+
+    rotationInput.addEventListener('blur', () => {
+      // Clamp value on blur
+      updateRotation(rotationInput.value);
+    });
+
+    // Drag support for rotation input
+    rotationInput.addEventListener('mousedown', (e) => {
+      // If already focused (text editing mode), don't intercept
+      if (document.activeElement === rotationInput) return;
+
+      // Record potential drag start
+      rotationDragState = {
+        startX: e.clientX,
+        startValue: parseInt(rotationInput.value, 10) || 0
+      };
+      rotationDragStarted = false;
+
+      document.addEventListener('mousemove', handleRotationDrag);
+      document.addEventListener('mouseup', handleRotationDragEnd);
+    });
+
+    function handleRotationDrag(e) {
+      if (!rotationDragState) return;
+
+      const deltaX = e.clientX - rotationDragState.startX;
+
+      // Only start drag after threshold is exceeded
+      if (!rotationDragStarted && Math.abs(deltaX) >= DRAG_THRESHOLD) {
+        rotationDragStarted = true;
+        // Prevent text selection while dragging
+        e.preventDefault();
+      }
+
+      if (!rotationDragStarted) return;
+
+      // 2 pixels = 1 degree for smooth control
+      let newValue = rotationDragState.startValue + Math.round(deltaX / 2);
+
+      // Wrap around at boundaries
+      while (newValue < 0) newValue += 360;
+      while (newValue >= 360) newValue -= 360;
+
+      rotationInput.value = newValue;
+
+      // Update overlay in real-time during drag
+      if (window.dayring) {
+        window.dayring.saveSettings({ rotation: newValue });
+      }
+    }
+
+    function handleRotationDragEnd(e) {
+      if (rotationDragState) {
+        if (rotationDragStarted) {
+          // Was a drag operation - finalize the value
+          const finalValue = parseInt(rotationInput.value, 10) || 0;
+          updateRotation(finalValue);
+        } else {
+          // Was just a click - focus the input for typing
+          rotationInput.focus();
+          rotationInput.select();
+        }
+      }
+      rotationDragState = null;
+      rotationDragStarted = false;
+      document.removeEventListener('mousemove', handleRotationDrag);
+      document.removeEventListener('mouseup', handleRotationDragEnd);
+    }
+
+    // Position settings
+    let currentAnchor = 'top-right';
+    let customPosition = null;
+
+    const anchorNames = {
+      'top-left': 'Top Left',
+      'top-center': 'Top Center',
+      'top-right': 'Top Right',
+      'middle-left': 'Middle Left',
+      'center': 'Center',
+      'middle-right': 'Middle Right',
+      'bottom-left': 'Bottom Left',
+      'bottom-center': 'Bottom Center',
+      'bottom-right': 'Bottom Right',
+      'custom': 'Custom'
+    };
+
+    function togglePositionSection() {
+      const section = document.getElementById('position-section');
+      section.classList.toggle('collapsed');
+    }
+
+    function updateAnchorSelection() {
+      document.querySelectorAll('.anchor-btn').forEach(btn => {
+        btn.classList.remove('selected');
+        if (btn.dataset.anchor === currentAnchor) {
+          btn.classList.add('selected');
+        }
+      });
+
+      const positionValue = document.getElementById('position-value');
+      if (customPosition && currentAnchor === 'custom') {
+        positionValue.textContent = `Custom (${customPosition.x}, ${customPosition.y})`;
+      } else {
+        positionValue.textContent = anchorNames[currentAnchor] || 'Top Right';
+      }
+    }
+
+    function selectAnchor(anchor) {
+      currentAnchor = anchor;
+      customPosition = null;
+      updateAnchorSelection();
+
+      if (window.dayring) {
+        window.dayring.saveSettings({
+          position: { anchor: anchor, custom: null }
+        });
+      }
+    }
+
+    function initPositionSettings() {
+      // Add click handlers to anchor buttons
+      document.querySelectorAll('.anchor-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          selectAnchor(btn.dataset.anchor);
+        });
+      });
+
+      // Listen for position updates from drag
+      if (window.dayring && window.dayring.onPositionChanged) {
+        window.dayring.onPositionChanged((position) => {
+          currentAnchor = 'custom';
+          customPosition = position;
+          updateAnchorSelection();
+        });
+      }
+    }
+
+    init();
+    initPositionSettings();
+
+    document.getElementById('header-close').addEventListener('click', () => {
+      if (window.dayring && window.dayring.closeWindow) window.dayring.closeWindow();
+    });
+  </script>
+</body>
+</html>

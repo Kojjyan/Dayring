@@ -1,0 +1,221 @@
+{
+  "product": {
+    "name": "Dayring",
+    "slogan": "Visualize a guilt-free and grounded day",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "category": "Time Visualization / Productivity Overlay"
+  },
+  "requirements": [
+    {
+      "category": "rendering",
+      "description": "Fix incorrect soft task gradient origin (duplicate gradient starting at task midpoint)",
+      "steps": [
+        "Enable a task with soft fade enabled",
+        "Render the task annulus segment",
+        "Verify only one gradient exists per task",
+        "Verify the gradient starts exactly at the task start time and not at the midpoint"
+      ],
+      "passes": true
+    },
+    {
+        "category": "rendering",
+        "description": "Replace discrete strip-based gradients with smooth analog gradients for tasks, with fades extending beyond task duration",
+        "steps": [
+          "Enable soft fade for a task",
+          "Render the task annulus segment with fade enabled",
+          "Verify the fade-in gradient extends before the task start time until fully transparent",
+          "Verify the fade-out gradient extends after the task end time until fully transparent",
+          "Confirm the task start and end times are fully transparent (100% alpha = 0)",
+          "Inspect the gradient at high zoom",
+          "Verify the gradient transitions continuously without visible color banding or discrete strips"
+        ],
+        "passes": true
+    },
+    {
+      "category": "rendering",
+      "description": "Improve wake and sleep time fade gradients to eliminate visible annulus traces",
+      "steps": [
+        "Enable soft fade for wake and sleep times",
+        "Observe the fade-out region near full transparency",
+        "Verify no visible annulus edge or color residue remains at the end of the fade",
+        "Confirm full transparency at fade endpoints"
+      ],
+      "passes": true
+    },
+    {
+      "category": "rendering",
+      "description": "Fix passed-time gradient blending with unallocated time",
+      "steps": [
+        "Advance current time into passed-time region",
+        "Observe gradient boundary between passed time and unallocated time",
+        "Verify colors do not blend or muddy at the transition",
+        "Confirm a clean, visually intentional transition between regions"
+      ],
+      "passes": true
+    },
+    {
+      "category": "layout",
+      "description": "Prevent current time text from overlapping the current time radial line",
+      "steps": [
+        "Rotate current time radial line through full 360 degrees",
+        "Track current time text position relative to the radial line",
+        "Verify text never overlaps the radial line at any angle",
+        "Confirm a minimum visual padding is maintained"
+      ],
+      "passes": true
+    },
+    {
+      "category": "layout",
+      "description": "Dynamically place current time text to avoid overlapping other UI elements",
+      "steps": [
+        "Render current time text near the radial line",
+        "Detect nearby UI elements (remaining time text, task labels)",
+        "Automatically select the closest available non-overlapping position",
+        "Verify text remains legible and does not collide with any other text"
+      ],
+      "passes": true
+    },
+    {
+      "category": "typography",
+      "description": "Increase current time text size for better legibility",
+      "steps": [
+        "Render current time text using updated font size",
+        "Compare visual prominence against 'X hrs remaining' text",
+        "Verify current time text is clearly readable without dominating the UI"
+      ],
+      "passes": true
+    },
+    {
+      "category": "ui",
+      "description": "Replace native Windows scrollbar in configure window with app-integrated scrollbar",
+      "steps": [
+        "Open configure window on Windows",
+        "Inspect scrollbar appearance and behavior",
+        "Verify scrollbar matches app visual style",
+        "Confirm native OS scrollbar is not visible"
+      ],
+      "passes": true
+    },
+    {
+      "category": "layout",
+      "description": "Ensure annulus rendering is not clipped at window edges",
+      "steps": [
+        "Resize application window to minimum supported dimensions",
+        "Observe annulus edges on all sides",
+        "Verify no part of the annulus is clipped or cut off"
+      ],
+      "passes": true
+    },
+    {
+      "category": "layout",
+      "description": "Prevent warning messages in configure window from being clipped",
+      "steps": [
+        "Create overlapping tasks or out-of-bounds task times",
+        "Trigger warning messages in the configure window",
+        "Verify all warning text is fully visible",
+        "Confirm no clipping occurs at window boundaries"
+      ],
+      "passes": true
+    },
+    {
+        "category": "rendering",
+        "description": "Remove inner and outer borders of the annulus",
+        "steps": [
+          "Render the annulus in normal operation",
+          "Inspect the inner and outer edges of the annulus",
+          "Verify no visible border, stroke, or outline exists on either edge",
+          "Confirm the annulus blends cleanly into the background"
+        ],
+        "passes": true
+      },
+      {
+        "category": "typography",
+        "description": "Increase shadow strength of current time text for better contrast against annulus",
+        "steps": [
+          "Render current time text over bright and dark annulus regions",
+          "Increase text shadow opacity, blur, or offset",
+          "Verify the text remains readable at all annulus positions",
+          "Confirm the shadow improves separation without appearing harsh or distracting"
+        ],
+        "passes": true
+      },
+      {
+        "category": "rendering",
+        "description": "Fix incorrect gradient direction for tasks near wake time and sleep time",
+        "steps": [
+          "Create a task that starts near the wake time boundary",
+          "Enable soft fade for the task",
+          "Observe the gradient direction near the wake time",
+          "Verify the fade-in and fade-out directions are consistent with task orientation",
+          "Repeat the test for a task near the sleep time boundary",
+          "Confirm gradients face the correct direction in both cases (see gradient-bug.png)"
+        ],
+        "passes": true
+      },
+      {
+        "category": "startup",
+        "description": "Ensure tasks are rendered immediately on app launch without requiring soft toggle",
+        "steps": [
+          "Launch the application from a cold start",
+          "Observe the task annulus rendering state on initial load",
+          "Verify all existing tasks are rendered immediately",
+          "Confirm no user interaction (such as clicking the soft toggle) is required to trigger rendering"
+        ],
+        "passes": true
+      },
+      {
+        "category": "ui",
+        "description": "Update Buy Me a Coffee window to use the app-integrated scrollbar",
+        "steps": [
+          "Open the Buy Me a Coffee window",
+          "Inspect the scrollbar appearance and behavior",
+          "Compare scrollbar style with the one used in the configure window",
+          "Verify the native OS scrollbar is not visible",
+          "Confirm the scrollbar matches the app-integrated design"
+        ],
+        "passes": true
+      },
+      {
+        "category": "color",
+        "description": "Enforce contrast hierarchy and template-scoped task colors for each color palette",
+        "steps": [
+          "Iterate through each color template in the palette",
+          "Render passed time and unallocated time using the template colors",
+          "Verify maximum contrast exists between passed time and unallocated time",
+          "Render task colors against unallocated time",
+          "Verify sufficient contrast exists between unallocated time and task colors",
+          "Select a color template",
+          "Create a new task",
+          "Verify the task color is selected exclusively from the current template's task color set"
+        ],
+        "passes": true
+      },
+      {
+        "category": "rendering",
+        "description": "Blend task gradients by transitioning from unallocated time color to task color",
+        "steps": [
+          "See the screenshot blend.png",
+          "Observe the fade-in and fade-out regions of the task",
+          "Verify the gradient transitions from unallocated time color into the task color",
+          "Confirm the gradient does not simply fade alpha over the unallocated time color",
+          "Inspect both ends of the task to ensure smooth color blending"
+        ],
+        "passes": true
+      },
+      {
+        "category": "ui",
+        "description": "Improve overall visual appearance of the overlay based on current app_issues.png",
+        "steps": [
+          "Compare the current overlay rendering to the reference screenshot app_issues.png",
+          "Identify visual artifacts such as banding, clipping, harsh edges, and poor contrast",
+          "Adjust rendering, spacing, and visual effects to reduce clutter and visual noise",
+          "Verify the overlay appears cleaner, more cohesive, and more polished than the reference"
+        ],
+        "passes": true
+      }                  
+  ]  
+}

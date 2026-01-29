@@ -1,0 +1,72 @@
+{
+  "name": "dayring",
+  "version": "1.0.0",
+  "description": "Visualize a guilt-free and grounded day",
+  "author": "Kojjyan <kojjyan.official@gmail.com>",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "build:all": "electron-builder -mwl"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kojjyan/DayRing.git"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Kojjyan/DayRing/issues"
+  },
+  "homepage": "https://github.com/Kojjyan/DayRing#readme",
+  "build": {
+    "appId": "com.kojjyan.dayring",
+    "productName": "DayRing",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "assets/favicon.ico",
+      "signAndEditExecutable": false
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^40.0.0",
+    "electron-builder": "^26.4.0"
+  },
+  "dependencies": {
+    "auto-launch": "^5.0.6"
+  }
+}

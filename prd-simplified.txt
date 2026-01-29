@@ -1,0 +1,56 @@
+### DayRing — Project Summary
+
+**Platform:** Desktop (Windows/macOS/Linux)
+**Category:** Time Visualization / Productivity Overlay
+**Slogan:** Visualize a guilt-free and grounded day
+
+**Core Concept:**
+DayRing is an always-on-top desktop app that visualizes the user’s waking hours as a circular annulus. Portions of the day are color-coded by tasks, with elapsed time greyed out. Users can track and plan their day visually and intuitively.
+
+**Key Features:**
+
+1. **Startup & System Tray**
+
+   * Launches minimized to system tray on startup.
+   * Persistent background process unless disabled/exited.
+   * Tray menu: Enable/Disable toggle, Configure Your Day.
+   * Double-click tray icon → Configure flow.
+
+2. **Onboarding**
+
+   * Step-by-step, single-question flow:
+     0. Welcome →
+
+     1. Wake time
+     2. Sleep time
+     3. Time awareness (daily awake hours)
+     4. Buy Me a Coffee (shown only when opening Configure from tray).
+
+3. **Annulus Overlay**
+
+   * Represents waking hours only, positioned top-right by default.
+   * Top of annulus = wake time; full circle = sleep time.
+   * Current time indicated with radial line.
+   * Elapsed time is greyed.
+   * Smooth fade-in on first appearance.
+
+4. **Configure Window**
+
+   * Adjust annulus size, opacity (0–100%, default 80%), position, and rotation.
+   * Hover near annulus → opacity +20% max 100%, task labels fade in.
+   * Task editor: add, delete, color, and blend tasks.
+   * Validation icons for overlapping/out-of-bounds tasks.
+   * Color customization: unallocated time, passed time, and palettes.
+   * Manual drag + 9 screen anchor presets.
+
+5. **Task Defaults**
+
+   * Breakfast 8:30–9:00, Lunch 12:00–12:30, Dinner 18:00–18:30
+   * Tasks automatically sorted chronologically.
+
+6. **Interaction Notes**
+
+   * Numeric rotation input (0–359°), wake/sleep aligned to top.
+   * Configure window shows Buy Me a Coffee screen first when opened from tray.
+
+**Goal:** Provide a visually intuitive tool for tracking, planning, and understanding daily time use.

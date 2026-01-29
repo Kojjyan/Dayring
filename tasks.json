@@ -1,0 +1,1449 @@
+{
+  "product": {
+    "name": "Dayring",
+    "slogan": "Visualize a guilt-free and grounded day",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "category": "Time Visualization / Productivity Overlay"
+  },
+  "requirements": [
+    {
+      "category": "startup",
+      "description": "Application launches minimized to system tray on system startup",
+      "steps": [
+        "Configure app to run on system startup",
+        "Restart the system or simulate startup",
+        "Verify app icon appears in system tray",
+        "Verify no application windows are visible on screen"
+      ],
+      "passes": true
+    },
+    {
+      "category": "startup",
+      "description": "Application runs persistently in background until explicitly exited",
+      "steps": [
+        "Launch the application",
+        "Verify app icon remains in system tray",
+        "Perform other tasks on the computer for several minutes",
+        "Verify app continues running (icon still present in tray)",
+        "Right-click tray icon and select exit option",
+        "Verify app closes and icon disappears from tray"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 0 displays welcome screen with app name and Continue button only",
+      "steps": [
+        "Launch app for first time (or reset onboarding state)",
+        "Verify welcome screen displays 'Welcome to Dayring'",
+        "Verify text is centered on screen",
+        "Verify only a 'Continue →' button is present",
+        "Verify no 'Back' button is present on this step"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 0 Continue button advances to Step 1",
+      "steps": [
+        "From Step 0 welcome screen",
+        "Click 'Continue →' button",
+        "Verify Step 1 (Wake Time) screen is displayed"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 1 displays wake time prompt with scrollable time selectors",
+      "steps": [
+        "Navigate to Step 1",
+        "Verify prompt text: 'A consistent sleep schedule maximizes your productivity. When will you wake up every day?'",
+        "Verify hour selector is present and scrollable (up/down)",
+        "Verify minute selector is present and scrollable (up/down)",
+        "Verify AM/PM selector is present and scrollable (up/down)"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 1 hour selector allows scrolling through valid hour values",
+      "steps": [
+        "Navigate to Step 1",
+        "Scroll up on hour selector",
+        "Verify hour increments (1-12 range for 12-hour format)",
+        "Scroll down on hour selector",
+        "Verify hour decrements",
+        "Verify selector wraps appropriately at boundaries"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 1 minute selector allows scrolling through valid minute values",
+      "steps": [
+        "Navigate to Step 1",
+        "Scroll up on minute selector",
+        "Verify minute increments (0-59 range)",
+        "Scroll down on minute selector",
+        "Verify minute decrements",
+        "Verify selector wraps appropriately at boundaries"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 1 AM/PM selector toggles between AM and PM",
+      "steps": [
+        "Navigate to Step 1",
+        "Note current AM/PM value",
+        "Scroll up on AM/PM selector",
+        "Verify value toggles to opposite (AM↔PM)",
+        "Scroll down on AM/PM selector",
+        "Verify value toggles again"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 1 displays Back and Continue buttons",
+      "steps": [
+        "Navigate to Step 1",
+        "Verify 'Back' button is present",
+        "Verify 'Continue' button is present"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 1 Back button returns to Step 0",
+      "steps": [
+        "Navigate to Step 1",
+        "Click 'Back' button",
+        "Verify Step 0 (Welcome) screen is displayed"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 1 Continue button advances to Step 2 and preserves wake time selection",
+      "steps": [
+        "Navigate to Step 1",
+        "Set wake time to 7:30 AM",
+        "Click 'Continue' button",
+        "Verify Step 2 (Sleep Time) screen is displayed",
+        "Click 'Back' to return to Step 1",
+        "Verify wake time still shows 7:30 AM"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 2 displays sleep time prompt with scrollable time selectors",
+      "steps": [
+        "Navigate to Step 2",
+        "Verify prompt text: 'When do you sleep?'",
+        "Verify hour selector is present and scrollable",
+        "Verify minute selector is present and scrollable",
+        "Verify AM/PM selector is present and scrollable"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 2 displays Back and Continue buttons",
+      "steps": [
+        "Navigate to Step 2",
+        "Verify 'Back' button is present",
+        "Verify 'Continue' button is present"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 2 Back button returns to Step 1",
+      "steps": [
+        "Navigate to Step 2",
+        "Click 'Back' button",
+        "Verify Step 1 (Wake Time) screen is displayed"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 2 Continue button advances to Step 3",
+      "steps": [
+        "Navigate to Step 2",
+        "Set a sleep time",
+        "Click 'Continue' button",
+        "Verify Step 3 (Time Awareness) screen is displayed"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 3 displays calculated waking hours based on wake and sleep times",
+      "steps": [
+        "Set wake time to 7:00 AM in Step 1",
+        "Set sleep time to 11:00 PM in Step 2",
+        "Navigate to Step 3",
+        "Verify prompt displays: 'You are awake 16 hours and 0 minutes every day. Where did all these hours go?'"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 3 correctly calculates waking hours with minutes",
+      "steps": [
+        "Set wake time to 6:30 AM in Step 1",
+        "Set sleep time to 10:15 PM in Step 2",
+        "Navigate to Step 3",
+        "Verify prompt displays: 'You are awake 15 hours and 45 minutes every day. Where did all these hours go?'"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 3 displays Back and Continue buttons",
+      "steps": [
+        "Navigate to Step 3",
+        "Verify 'Back' button is present",
+        "Verify 'Continue' button is present"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 3 Back button returns to Step 2",
+      "steps": [
+        "Navigate to Step 3",
+        "Click 'Back' button",
+        "Verify Step 2 (Sleep Time) screen is displayed"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 3 Continue button advances to Step 4",
+      "steps": [
+        "Navigate to Step 3",
+        "Click 'Continue' button",
+        "Verify Step 4 (Buy Me a Coffee) screen is displayed"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 4 displays support message and donation options",
+      "steps": [
+        "Navigate to Step 4",
+        "Verify text displays: 'Support Kojjyan, the developer of this productivity tool.'",
+        "Verify 'Continue' button is present",
+        "Verify 'Skip' button is present",
+        "Verify 'Back' button is present"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 4 Continue button opens Buy Me a Coffee page in default browser",
+      "steps": [
+        "Navigate to Step 4",
+        "Click 'Continue' button",
+        "Verify default browser opens",
+        "Verify Buy Me a Coffee page loads"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 4 Skip button proceeds to Configure window",
+      "steps": [
+        "Navigate to Step 4",
+        "Click 'Skip' button",
+        "Verify Configure window is displayed"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 4 Back button returns to Step 3",
+      "steps": [
+        "Navigate to Step 4",
+        "Click 'Back' button",
+        "Verify Step 3 (Time Awareness) screen is displayed"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 4 (Buy Me a Coffee) does not appear on app startup after initial onboarding",
+      "steps": [
+        "Complete full onboarding flow",
+        "Close and relaunch the application",
+        "Verify Step 4 screen does not appear",
+        "Verify annulus appears directly (or app minimizes to tray)"
+      ],
+      "passes": true
+    },
+    {
+      "category": "onboarding",
+      "description": "Step 4 (Buy Me a Coffee) appears every time Configure is opened from system tray",
+      "steps": [
+        "Complete onboarding",
+        "Right-click system tray icon",
+        "Select 'Configure Your Day'",
+        "Verify Step 4 (Buy Me a Coffee) screen appears before Configure window",
+        "Skip to Configure window",
+        "Close Configure window",
+        "Right-click system tray icon again",
+        "Select 'Configure Your Day'",
+        "Verify Step 4 screen appears again"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Annulus fades into view after onboarding completes",
+      "steps": [
+        "Complete onboarding flow (reach Configure window via Skip)",
+        "Close Configure window",
+        "Verify annulus (ring shape) appears on screen",
+        "Verify annulus has a smooth fade-in animation (not instant appearance)"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Annulus displays with visible border",
+      "steps": [
+        "View the annulus on screen",
+        "Verify annulus has a visible border around the ring"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Annulus default position is top-right corner of screen",
+      "steps": [
+        "Complete onboarding with fresh installation",
+        "Verify annulus appears in top-right corner of the screen",
+        "Verify annulus does not clip off-screen"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Annulus represents only waking hours (not full 24 hours)",
+      "steps": [
+        "Set wake time to 8:00 AM",
+        "Set sleep time to 10:00 PM (14 waking hours)",
+        "View annulus",
+        "Verify the full ring represents the 14 waking hours",
+        "Verify the annulus is NOT divided into 24 segments"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Top of annulus represents both wake time and sleep time",
+      "steps": [
+        "Configure wake and sleep times",
+        "View annulus",
+        "Verify the visual top of the annulus is the starting point (wake time)",
+        "Verify the visual top is also the ending point (sleep time)",
+        "Verify the cycle completes at the same point"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Radial line indicates current system time position on annulus",
+      "steps": [
+        "Set wake time to 6:00 AM, sleep time to 10:00 PM",
+        "At 2:00 PM (8 hours after wake, 50% of day elapsed)",
+        "View annulus",
+        "Verify a radial line intersects the annulus perpendicularly",
+        "Verify line position corresponds to approximately 50% around the ring from the top"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Radial time indicator updates as system time progresses",
+      "steps": [
+        "Observe the radial line position on annulus",
+        "Wait 1 minute",
+        "Verify the radial line has moved clockwise slightly",
+        "Alternatively, change system time forward by 1 hour",
+        "Verify radial line position updates correspondingly"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Elapsed time portion of annulus is greyed out",
+      "steps": [
+        "View annulus during waking hours",
+        "Verify the portion from wake time (top) to current time is greyed out",
+        "Verify the remaining portion (current time to sleep time) retains its color"
+      ],
+      "passes": true
+    },
+    {
+      "category": "system-tray",
+      "description": "App icon persists in system tray while running",
+      "steps": [
+        "Launch the application",
+        "Verify app icon appears in system tray",
+        "Use the application normally",
+        "Verify icon remains visible in system tray throughout"
+      ],
+      "passes": true
+    },
+    {
+      "category": "system-tray",
+      "description": "Right-click on tray icon displays context menu with Enable/Disable toggle",
+      "steps": [
+        "Right-click on app icon in system tray",
+        "Verify context menu appears",
+        "Verify 'Enable' or 'Disable' option is present (toggle state)"
+      ],
+      "passes": true
+    },
+    {
+      "category": "system-tray",
+      "description": "Right-click menu Enable/Disable toggle controls annulus visibility",
+      "steps": [
+        "With annulus visible, right-click tray icon",
+        "Click 'Disable'",
+        "Verify annulus disappears from screen",
+        "Right-click tray icon again",
+        "Verify option now shows 'Enable'",
+        "Click 'Enable'",
+        "Verify annulus reappears on screen"
+      ],
+      "passes": true
+    },
+    {
+      "category": "system-tray",
+      "description": "Right-click menu contains Configure Your Day option",
+      "steps": [
+        "Right-click on app icon in system tray",
+        "Verify 'Configure Your Day' option is present in menu"
+      ],
+      "passes": true
+    },
+    {
+      "category": "system-tray",
+      "description": "Configure Your Day menu option opens Buy Me a Coffee screen then Configure window",
+      "steps": [
+        "Right-click on app icon in system tray",
+        "Click 'Configure Your Day'",
+        "Verify Buy Me a Coffee screen (Step 4) appears",
+        "Click 'Skip'",
+        "Verify Configure window opens"
+      ],
+      "passes": true
+    },
+    {
+      "category": "system-tray",
+      "description": "Double left-click on tray icon opens Configure flow",
+      "steps": [
+        "Double left-click on app icon in system tray",
+        "Verify Buy Me a Coffee screen (Step 4) appears",
+        "Click 'Skip'",
+        "Verify Configure window opens"
+      ],
+      "passes": true
+    },
+    {
+      "category": "configure-window",
+      "description": "Configure window displays app logo and/or app name in header",
+      "steps": [
+        "Open Configure window",
+        "Verify header section is visible",
+        "Verify app logo and/or 'Dayring' name is displayed in header"
+      ],
+      "passes": true
+    },
+    {
+      "category": "configure-window",
+      "description": "Configure window contains opacity slider with 0-100% range",
+      "steps": [
+        "Open Configure window",
+        "Locate opacity slider in header section",
+        "Verify slider minimum value is 0%",
+        "Verify slider maximum value is 100%",
+        "Verify slider is adjustable across full range"
+      ],
+      "passes": true
+    },
+    {
+      "category": "configure-window",
+      "description": "Opacity slider defaults to 80%",
+      "steps": [
+        "Perform fresh installation or reset settings",
+        "Open Configure window",
+        "Verify opacity slider is set to 80% by default"
+      ],
+      "passes": true
+    },
+    {
+      "category": "configure-window",
+      "description": "Opacity slider adjusts annulus transparency in real-time",
+      "steps": [
+        "Open Configure window with annulus visible",
+        "Set opacity to 100%",
+        "Verify annulus is fully opaque",
+        "Set opacity to 50%",
+        "Verify annulus is semi-transparent",
+        "Set opacity to 0%",
+        "Verify annulus is fully transparent (invisible)"
+      ],
+      "passes": true
+    },
+    {
+      "category": "configure-window",
+      "description": "Annulus opacity increases when cursor is near it (hover behavior)",
+      "steps": [
+        "Set annulus opacity to 60% in Configure window",
+        "Close Configure window",
+        "Move cursor away from annulus",
+        "Verify annulus displays at 60% opacity",
+        "Move cursor near/over the annulus",
+        "Verify opacity increases to 80% (60% + 20%)"
+      ],
+      "passes": true
+    },
+    {
+      "category": "configure-window",
+      "description": "Hover opacity boost is capped at 100%",
+      "steps": [
+        "Set annulus opacity to 90% in Configure window",
+        "Close Configure window",
+        "Move cursor near/over the annulus",
+        "Verify opacity is 100% (capped, not 110%)"
+      ],
+      "passes": true
+    },
+    {
+      "category": "configure-window",
+      "description": "Task labels fade in when cursor is near annulus",
+      "steps": [
+        "Create at least one task with a name",
+        "Close Configure window",
+        "Move cursor away from annulus",
+        "Verify task labels are not visible on annulus",
+        "Move cursor near/over the annulus",
+        "Verify task labels fade in next to their corresponding segments"
+      ],
+      "passes": true
+    },
+    {
+      "category": "configure-window",
+      "description": "Configure window contains annulus size adjustment control",
+      "steps": [
+        "Open Configure window",
+        "Verify annulus size adjustment control is present",
+        "Verify it allows increasing and decreasing the annulus diameter"
+      ],
+      "passes": true
+    },
+    {
+      "category": "configure-window",
+      "description": "Annulus size adjustment changes diameter in real-time",
+      "steps": [
+        "Open Configure window with annulus visible",
+        "Note current annulus size",
+        "Increase size setting",
+        "Verify annulus diameter increases visibly",
+        "Decrease size setting",
+        "Verify annulus diameter decreases"
+      ],
+      "passes": true
+    },
+    {
+      "category": "configure-window",
+      "description": "Annulus grows inward when size increases (never clips off-screen)",
+      "steps": [
+        "Position annulus in top-right corner",
+        "Open Configure window",
+        "Note the outer edge position of annulus",
+        "Increase annulus size to maximum",
+        "Verify the outer edge remains in same position",
+        "Verify annulus grows inward (inner radius decreases)",
+        "Verify annulus does not extend off-screen"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus-center",
+      "description": "Annulus center displays remaining hours in large text",
+      "steps": [
+        "Set wake time to 8:00 AM, sleep time to 10:00 PM (14 hours)",
+        "At 2:00 PM (6 hours remaining)",
+        "View annulus center",
+        "Verify large text displays '6 hrs'"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus-center",
+      "description": "Annulus center displays 'remaining' subtitle below hours",
+      "steps": [
+        "View annulus",
+        "Verify small subtitle text below the hours displays 'remaining'"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus-center",
+      "description": "Remaining hours updates as time passes",
+      "steps": [
+        "Note the remaining hours displayed",
+        "Wait until the hour changes (or adjust system time)",
+        "Verify remaining hours count decreases appropriately"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-editor",
+      "description": "Task list displays task entries with name, start time, end time, and color square",
+      "steps": [
+        "Open Configure window",
+        "Locate task list/editor section",
+        "Verify each task entry shows: task name field, start time field, end time field, color square"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-editor",
+      "description": "Task entry color square opens color picker when clicked",
+      "steps": [
+        "Open Configure window",
+        "Click on a task's color square",
+        "Verify a color picker opens",
+        "Select a new color",
+        "Verify color square updates to selected color"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-editor",
+      "description": "Task entry includes soft edges checkbox",
+      "steps": [
+        "Open Configure window",
+        "Locate a task entry",
+        "Verify soft edges checkbox is present for the task"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-editor",
+      "description": "Soft edges checkbox enables blending on annulus segment",
+      "steps": [
+        "Create a task",
+        "Uncheck soft edges checkbox",
+        "View annulus - verify task segment has hard/sharp edges",
+        "Check soft edges checkbox",
+        "View annulus - verify task segment has soft/blended edges"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-editor",
+      "description": "Task delete button appears only on hover",
+      "steps": [
+        "Open Configure window",
+        "View a task entry without hovering",
+        "Verify delete button is not visible",
+        "Hover cursor over the task entry",
+        "Verify delete button becomes visible"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-editor",
+      "description": "Task delete button removes task from list",
+      "steps": [
+        "Open Configure window with existing tasks",
+        "Note the number of tasks",
+        "Hover over a task and click delete button",
+        "Verify task is removed from the list",
+        "Verify task count decreases by one"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-editor",
+      "description": "Default tasks are pre-populated: Breakfast, Lunch, Dinner",
+      "steps": [
+        "Perform fresh installation or reset to defaults",
+        "Open Configure window",
+        "Verify 'Breakfast' task exists with time 8:30 AM – 9:00 AM",
+        "Verify 'Lunch' task exists with time 12:00 PM – 12:30 PM",
+        "Verify 'Dinner' task exists with time 6:00 PM – 6:30 PM"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-editor",
+      "description": "Default tasks are editable",
+      "steps": [
+        "Open Configure window",
+        "Edit the 'Breakfast' task name to 'Morning Meal'",
+        "Verify name updates successfully",
+        "Edit the start time to 8:00 AM",
+        "Verify time updates successfully",
+        "Close and reopen Configure window",
+        "Verify changes persisted"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-editor",
+      "description": "Plus button adds a new task entry",
+      "steps": [
+        "Open Configure window",
+        "Note current number of tasks",
+        "Click the '+' button",
+        "Verify a new empty task entry is added to the list"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-editor",
+      "description": "Pressing Enter after entering task times saves the task",
+      "steps": [
+        "Open Configure window",
+        "Click '+' to add new task",
+        "Enter task name: 'Meeting'",
+        "Enter start time: 2:00 PM",
+        "Enter end time: 3:00 PM",
+        "Press Enter key",
+        "Verify task is saved (not in edit mode)",
+        "Close and reopen Configure window",
+        "Verify 'Meeting' task persists"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-editor",
+      "description": "Task list automatically reshuffles into chronological order after save",
+      "steps": [
+        "Open Configure window",
+        "Add task 'Early Task' from 7:00 AM – 7:30 AM",
+        "Press Enter to save",
+        "Verify task list is in chronological order",
+        "Verify 'Early Task' appears before 'Breakfast' (8:30 AM)"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-validation",
+      "description": "Task outside waking hours shows red triangle warning icon",
+      "steps": [
+        "Set wake time to 8:00 AM, sleep time to 10:00 PM",
+        "Create task from 6:00 AM – 7:00 AM (before wake time)",
+        "Verify small red triangle with exclamation appears to the left of task name"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-validation",
+      "description": "Task outside waking hours does not appear on annulus",
+      "steps": [
+        "Set wake time to 8:00 AM, sleep time to 10:00 PM",
+        "Create task from 11:00 PM – 11:30 PM (after sleep time)",
+        "View annulus",
+        "Verify this task segment does not appear on annulus"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-validation",
+      "description": "Overlapping tasks show orange circle warning icon",
+      "steps": [
+        "Create task 'Task A' from 2:00 PM – 3:00 PM",
+        "Create task 'Task B' from 2:30 PM – 3:30 PM (overlaps with Task A)",
+        "Verify small orange circle with exclamation appears to the left of both task names"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-validation",
+      "description": "Validation icons appear to the left of task name without shifting alignment",
+      "steps": [
+        "Create a valid task (no warnings)",
+        "Note the position of the task name",
+        "Modify task to trigger a warning",
+        "Verify warning icon appears to the left",
+        "Verify task name position has not shifted"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-validation",
+      "description": "Both warning icons can appear simultaneously and stack horizontally",
+      "steps": [
+        "Set wake time to 8:00 AM, sleep time to 10:00 PM",
+        "Create task 'Task A' from 9:00 AM – 10:00 AM",
+        "Create task 'Task B' from 6:00 AM – 9:30 AM (outside hours AND overlapping)",
+        "Verify Task B shows both red triangle and orange circle icons",
+        "Verify icons are stacked horizontally to the left of task name"
+      ],
+      "passes": true
+    },
+    {
+      "category": "task-validation",
+      "description": "Hovering validation icon shows descriptive tooltip",
+      "steps": [
+        "Create a task that triggers the red triangle warning",
+        "Hover cursor over the red triangle icon",
+        "Verify a tooltip/speech-bubble appears with description (e.g., 'Task is outside waking hours')",
+        "Create a task that triggers the orange circle warning",
+        "Hover cursor over the orange circle icon",
+        "Verify a tooltip appears with description (e.g., 'Task overlaps with another task')"
+      ],
+      "passes": true
+    },
+    {
+      "category": "color-customization",
+      "description": "Unallocated time color box is present below task list",
+      "steps": [
+        "Open Configure window",
+        "Locate area below task list",
+        "Verify color box labeled for unallocated time is present"
+      ],
+      "passes": true
+    },
+    {
+      "category": "color-customization",
+      "description": "Unallocated time color box controls annulus segments without tasks",
+      "steps": [
+        "Open Configure window",
+        "Set unallocated time color to bright blue",
+        "View annulus",
+        "Verify segments without assigned tasks display in bright blue"
+      ],
+      "passes": true
+    },
+    {
+      "category": "color-customization",
+      "description": "Passed time color box is present below unallocated time",
+      "steps": [
+        "Open Configure window",
+        "Locate area below unallocated time color box",
+        "Verify color box labeled for passed/elapsed time is present"
+      ],
+      "passes": true
+    },
+    {
+      "category": "color-customization",
+      "description": "Passed time color defaults to grey",
+      "steps": [
+        "Perform fresh installation or reset to defaults",
+        "Open Configure window",
+        "Verify passed time color box shows grey as default"
+      ],
+      "passes": true
+    },
+    {
+      "category": "color-customization",
+      "description": "Passed time color box controls elapsed time color on annulus",
+      "steps": [
+        "Open Configure window",
+        "Set passed time color to dark purple",
+        "View annulus during waking hours",
+        "Verify elapsed portion of annulus displays in dark purple"
+      ],
+      "passes": true
+    },
+    {
+      "category": "color-customization",
+      "description": "Color palette dropdown selector is present",
+      "steps": [
+        "Open Configure window",
+        "Locate color customization section",
+        "Verify dropdown selector for predefined color palettes exists"
+      ],
+      "passes": true
+    },
+    {
+      "category": "color-customization",
+      "description": "Color palettes contain modern colors with good contrast",
+      "steps": [
+        "Open Configure window",
+        "Open color palette dropdown",
+        "Select a palette",
+        "Verify colors appear modern/contemporary",
+        "Create multiple adjacent tasks",
+        "Verify adjacent task colors have good visual contrast"
+      ],
+      "passes": true
+    },
+    {
+      "category": "color-customization",
+      "description": "Default palette distinguishes background, unallocated time, and task colors",
+      "steps": [
+        "Perform fresh installation or reset to defaults",
+        "View annulus with default palette",
+        "Verify background color is distinct from unallocated time color",
+        "Verify task colors visually stand out from unallocated time"
+      ],
+      "passes": true
+    },
+    {
+      "category": "wake-sleep-settings",
+      "description": "Wake time can be modified in Configure window",
+      "steps": [
+        "Open Configure window",
+        "Locate wake time setting",
+        "Change wake time from current value to new value",
+        "Verify annulus updates to reflect new wake time",
+        "Close and reopen Configure window",
+        "Verify wake time change persisted"
+      ],
+      "passes": true
+    },
+    {
+      "category": "wake-sleep-settings",
+      "description": "Sleep time can be modified in Configure window",
+      "steps": [
+        "Open Configure window",
+        "Locate sleep time setting",
+        "Change sleep time from current value to new value",
+        "Verify annulus updates to reflect new sleep time",
+        "Close and reopen Configure window",
+        "Verify sleep time change persisted"
+      ],
+      "passes": true
+    },
+    {
+      "category": "wake-sleep-settings",
+      "description": "Wake time has checkbox to enable/disable annulus fade-out",
+      "steps": [
+        "Open Configure window",
+        "Locate wake time section",
+        "Verify checkbox exists for enabling/disabling fade-out at wake time"
+      ],
+      "passes": true
+    },
+    {
+      "category": "wake-sleep-settings",
+      "description": "Sleep time has checkbox to enable/disable annulus fade-out",
+      "steps": [
+        "Open Configure window",
+        "Locate sleep time section",
+        "Verify checkbox exists for enabling/disabling fade-out at sleep time"
+      ],
+      "passes": true
+    },
+    {
+      "category": "wake-sleep-settings",
+      "description": "Fade-out checkboxes are enabled by default",
+      "steps": [
+        "Perform fresh installation or reset to defaults",
+        "Open Configure window",
+        "Verify wake time fade-out checkbox is checked by default",
+        "Verify sleep time fade-out checkbox is checked by default"
+      ],
+      "passes": true
+    },
+    {
+      "category": "wake-sleep-settings",
+      "description": "Annulus fades out at sleep time when fade-out is enabled",
+      "steps": [
+        "Enable sleep time fade-out in Configure window",
+        "Set sleep time to a testable value (or adjust system clock)",
+        "Observe annulus at sleep time",
+        "Verify annulus fades out smoothly"
+      ],
+      "passes": true
+    },
+    {
+      "category": "wake-sleep-settings",
+      "description": "Annulus does not fade out at sleep time when fade-out is disabled",
+      "steps": [
+        "Disable sleep time fade-out in Configure window",
+        "Set sleep time to a testable value (or adjust system clock)",
+        "Observe annulus at sleep time",
+        "Verify annulus remains visible (does not fade out)"
+      ],
+      "passes": true
+    },
+    {
+      "category": "positional-settings",
+      "description": "Positional settings section is expandable",
+      "steps": [
+        "Open Configure window",
+        "Locate positional settings section",
+        "Verify it is collapsible/expandable",
+        "Click to expand if collapsed",
+        "Verify positional options are revealed"
+      ],
+      "passes": true
+    },
+    {
+      "category": "positional-settings",
+      "description": "Annulus can be dragged to any position while Configure window is open",
+      "steps": [
+        "Open Configure window",
+        "Click and hold on the annulus",
+        "Drag annulus to a different position on screen",
+        "Release mouse button",
+        "Verify annulus stays in new position"
+      ],
+      "passes": true
+    },
+    {
+      "category": "positional-settings",
+      "description": "Configure window displays instructional text about manual placement",
+      "steps": [
+        "Open Configure window",
+        "Expand positional settings section",
+        "Verify instructional text is present explaining that the annulus can be dragged while this window is open"
+      ],
+      "passes": true
+    },
+    {
+      "category": "positional-settings",
+      "description": "Manually placed annulus position persists after closing Configure window",
+      "steps": [
+        "Open Configure window",
+        "Drag annulus to bottom-left area of screen",
+        "Close Configure window",
+        "Verify annulus remains in bottom-left area",
+        "Close and relaunch application",
+        "Verify annulus position persisted"
+      ],
+      "passes": true
+    },
+    {
+      "category": "positional-settings",
+      "description": "Nine screen anchor presets are available",
+      "steps": [
+        "Open Configure window",
+        "Expand positional settings section",
+        "Verify nine anchor options are present: Top left, Top center, Top right, Middle left, Center, Middle right, Bottom left, Bottom center, Bottom right"
+      ],
+      "passes": true
+    },
+    {
+      "category": "positional-settings",
+      "description": "Top left anchor positions annulus in top-left corner",
+      "steps": [
+        "Open Configure window",
+        "Click 'Top left' anchor preset",
+        "Verify annulus moves to top-left corner of screen"
+      ],
+      "passes": true
+    },
+    {
+      "category": "positional-settings",
+      "description": "Top center anchor positions annulus at top-center of screen",
+      "steps": [
+        "Open Configure window",
+        "Click 'Top center' anchor preset",
+        "Verify annulus moves to top-center of screen"
+      ],
+      "passes": true
+    },
+    {
+      "category": "positional-settings",
+      "description": "Top right anchor positions annulus in top-right corner",
+      "steps": [
+        "Open Configure window",
+        "Click 'Top right' anchor preset",
+        "Verify annulus moves to top-right corner of screen"
+      ],
+      "passes": true
+    },
+    {
+      "category": "positional-settings",
+      "description": "Middle left anchor positions annulus at middle-left of screen",
+      "steps": [
+        "Open Configure window",
+        "Click 'Middle left' anchor preset",
+        "Verify annulus moves to middle-left of screen"
+      ],
+      "passes": true
+    },
+    {
+      "category": "positional-settings",
+      "description": "Center anchor positions annulus at center of screen",
+      "steps": [
+        "Open Configure window",
+        "Click 'Center' anchor preset",
+        "Verify annulus moves to center of screen"
+      ],
+      "passes": true
+    },
+    {
+      "category": "positional-settings",
+      "description": "Middle right anchor positions annulus at middle-right of screen",
+      "steps": [
+        "Open Configure window",
+        "Click 'Middle right' anchor preset",
+        "Verify annulus moves to middle-right of screen"
+      ],
+      "passes": true
+    },
+    {
+      "category": "positional-settings",
+      "description": "Bottom left anchor positions annulus in bottom-left corner",
+      "steps": [
+        "Open Configure window",
+        "Click 'Bottom left' anchor preset",
+        "Verify annulus moves to bottom-left corner of screen"
+      ],
+      "passes": true
+    },
+    {
+      "category": "positional-settings",
+      "description": "Bottom center anchor positions annulus at bottom-center of screen",
+      "steps": [
+        "Open Configure window",
+        "Click 'Bottom center' anchor preset",
+        "Verify annulus moves to bottom-center of screen"
+      ],
+      "passes": true
+    },
+    {
+      "category": "positional-settings",
+      "description": "Bottom right anchor positions annulus in bottom-right corner",
+      "steps": [
+        "Open Configure window",
+        "Click 'Bottom right' anchor preset",
+        "Verify annulus moves to bottom-right corner of screen"
+      ],
+      "passes": true
+    },
+    {
+      "category": "rotation",
+      "description": "Numeric input for rotation angle is present",
+      "steps": [
+        "Open Configure window",
+        "Locate rotation control",
+        "Verify numeric input field for rotation angle exists"
+      ],
+      "passes": true
+    },
+    {
+      "category": "rotation",
+      "description": "Rotation input accepts values from 0 to 359 degrees",
+      "steps": [
+        "Open Configure window",
+        "Enter 0 in rotation input",
+        "Verify value is accepted",
+        "Enter 359 in rotation input",
+        "Verify value is accepted",
+        "Enter 360 in rotation input",
+        "Verify value is rejected or wraps to 0"
+      ],
+      "passes": true
+    },
+    {
+      "category": "rotation",
+      "description": "Rotation defaults to 0 degrees",
+      "steps": [
+        "Perform fresh installation or reset to defaults",
+        "Open Configure window",
+        "Verify rotation input shows 0"
+      ],
+      "passes": true
+    },
+    {
+      "category": "rotation",
+      "description": "Wake/sleep point is aligned to top of annulus at 0 degree rotation",
+      "steps": [
+        "Set rotation to 0 degrees",
+        "View annulus",
+        "Verify the wake/sleep point (start/end of cycle) is at the visual top of the annulus"
+      ],
+      "passes": true
+    },
+    {
+      "category": "rotation",
+      "description": "Rotation value changes annulus orientation",
+      "steps": [
+        "Set rotation to 0 degrees",
+        "Note the position of wake/sleep point (at top)",
+        "Set rotation to 90 degrees",
+        "Verify wake/sleep point has rotated 90 degrees clockwise (now at right)",
+        "Set rotation to 180 degrees",
+        "Verify wake/sleep point is now at bottom"
+      ],
+      "passes": true
+    },
+    {
+      "category": "rotation",
+      "description": "Dragging left/right on rotation input adjusts value smoothly",
+      "steps": [
+        "Open Configure window",
+        "Locate rotation input",
+        "Click and drag left on the input",
+        "Verify rotation value decreases smoothly",
+        "Click and drag right on the input",
+        "Verify rotation value increases smoothly",
+        "Verify annulus rotation updates in real-time while dragging"
+      ],
+      "passes": true
+    },
+    {
+      "category": "ui-general",
+      "description": "Application has modern, polished UI design",
+      "steps": [
+        "Launch application",
+        "View onboarding screens",
+        "View Configure window",
+        "View annulus overlay",
+        "Verify all UI elements have consistent, modern styling",
+        "Verify visual polish (smooth animations, proper spacing, readable typography)"
+      ],
+      "passes": true
+    },
+    {
+      "category": "persistence",
+      "description": "All user settings persist across application restarts",
+      "steps": [
+        "Configure custom wake time, sleep time, opacity, tasks, colors, position, and rotation",
+        "Close application completely",
+        "Relaunch application",
+        "Open Configure window",
+        "Verify all settings have persisted with their configured values"
+      ],
+      "passes": true
+    },
+    {
+      "category": "cross-platform",
+      "description": "Application runs on Windows",
+      "steps": [
+        "Install application on Windows",
+        "Launch application",
+        "Verify all features function correctly",
+        "Verify system tray integration works"
+      ],
+      "passes": true
+    },
+    {
+      "category": "cross-platform",
+      "description": "Application runs on macOS",
+      "steps": [
+        "Install application on macOS",
+        "Launch application",
+        "Verify all features function correctly",
+        "Verify menu bar/system tray integration works"
+      ],
+      "passes": true
+    },
+    {
+      "category": "cross-platform",
+      "description": "Application runs on Linux",
+      "steps": [
+        "Install application on Linux",
+        "Launch application",
+        "Verify all features function correctly",
+        "Verify system tray integration works"
+      ],
+      "passes": true
+    },
+    {
+      "category": "ui-general",
+      "description": "Application window has no default menu bar (File, Edit, View, Window, Help)",
+      "steps": [
+        "Launch the application",
+        "Open the Configure window",
+        "Verify no menu bar is visible at the top of the window",
+        "Verify File, Edit, View, Window, Help options are not present",
+        "Verify the window has a clean, native app appearance without Electron/framework default menus"
+      ],
+      "passes": true
+    },
+    {
+      "category": "rotation",
+      "description": "Rotation input allows direct keyboard entry of degree values",
+      "steps": [
+        "Open Configure window",
+        "Locate rotation input field",
+        "Click on the rotation input to focus it",
+        "Type '45' using keyboard",
+        "Verify the value updates to 45",
+        "Verify annulus rotates to 45 degrees",
+        "Clear the field and type '270'",
+        "Verify the value updates to 270 and annulus reflects this rotation"
+      ],
+      "passes": true
+    },
+    {
+      "category": "rotation",
+      "description": "Rotation input supports both typing and drag interaction",
+      "steps": [
+        "Open Configure window",
+        "Type '90' in rotation input field",
+        "Verify value is 90",
+        "Click and drag right on the input",
+        "Verify value increases smoothly from 90",
+        "Click in the field and type '180' to replace value",
+        "Verify typing overrides the dragged value correctly"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Annulus displays a small gap between wake time and sleep time points",
+      "steps": [
+        "Complete onboarding with wake time 7:00 AM and sleep time 11:00 PM",
+        "View the annulus",
+        "Verify there is a visible small gap at the top of the annulus",
+        "Verify the gap separates the wake time start point from the sleep time end point",
+        "Verify the annulus is not a complete closed ring"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Annulus fades in from wake time point when wake fade-in is enabled",
+      "steps": [
+        "Open Configure window",
+        "Ensure wake time fade-in checkbox is checked",
+        "View annulus",
+        "Verify the annulus segment starting at wake time (after the gap) fades in gradually",
+        "Verify the fade creates a smooth gradient from transparent to full opacity",
+        "Verify the fade-in effect is visually apparent at the wake time starting edge"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Annulus fades out toward sleep time point when sleep fade-out is enabled",
+      "steps": [
+        "Open Configure window",
+        "Ensure sleep time fade-out checkbox is checked",
+        "View annulus",
+        "Verify the annulus segment approaching sleep time fades out gradually",
+        "Verify the fade creates a smooth gradient from full opacity to transparent",
+        "Verify the fade-out effect ends at the sleep time edge (before the gap)"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Annulus shows no fade-in effect when wake fade-in is disabled",
+      "steps": [
+        "Open Configure window",
+        "Uncheck wake time fade-in checkbox",
+        "View annulus",
+        "Verify the annulus begins at full opacity immediately after the gap",
+        "Verify there is no gradient fade effect at the wake time edge"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Annulus shows no fade-out effect when sleep fade-out is disabled",
+      "steps": [
+        "Open Configure window",
+        "Uncheck sleep time fade-out checkbox",
+        "View annulus",
+        "Verify the annulus maintains full opacity up to the sleep time edge",
+        "Verify there is no gradient fade effect approaching the gap"
+      ],
+      "passes": true
+    },
+    {
+      "category": "color-customization",
+      "description": "Color palette selection updates unallocated time, passed time, and all task colors",
+      "steps": [
+        "Open Configure window",
+        "Note current colors for unallocated time, passed time, and tasks",
+        "Select a different color palette from the dropdown",
+        "Verify unallocated time color box updates to new palette color",
+        "Verify passed time color box updates to new palette color",
+        "Verify all task color squares update to new palette colors",
+        "View annulus and confirm all segments reflect the new palette"
+      ],
+      "passes": true
+    },
+    {
+      "category": "color-customization",
+      "description": "Color palette UI clearly indicates it affects all color settings",
+      "steps": [
+        "Open Configure window",
+        "Locate color palette dropdown",
+        "Verify there is a label or description indicating the palette affects unallocated time, passed time, and task colors",
+        "Verify the relationship between palette selection and individual color boxes is visually clear",
+        "Verify selecting a palette visibly updates all related color boxes simultaneously"
+      ],
+      "passes": true
+    },
+    {
+      "category": "color-customization",
+      "description": "Unallocated time color is controlled by palette (not hardcoded blue)",
+      "steps": [
+        "Perform fresh installation or reset to defaults",
+        "Open Configure window",
+        "Verify unallocated time color matches the default palette (not always blue)",
+        "Select a palette with a non-blue unallocated time color",
+        "View annulus",
+        "Verify unallocated time segments display the palette color, not blue"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Soft edge blending between tasks and unallocated time is gradual and visually smooth",
+      "steps": [
+        "Create a task with soft edges checkbox enabled",
+        "View annulus",
+        "Verify the transition between task segment and adjacent unallocated time is a gradual gradient",
+        "Verify the blend spans a visually appropriate distance (not too abrupt)",
+        "Verify the gradient appears smooth without harsh color banding",
+        "Verify the blend looks polished and professional"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Soft edge blending between adjacent tasks is gradual and visually smooth",
+      "steps": [
+        "Create two adjacent tasks (Task A ends when Task B begins)",
+        "Enable soft edges for both tasks",
+        "View annulus",
+        "Verify the transition between the two task segments is a gradual gradient",
+        "Verify colors blend smoothly without harsh edges",
+        "Verify the effect appears sleek and intentional"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Radial time indicator line aligns exactly with the passed time edge",
+      "steps": [
+        "View annulus during waking hours",
+        "Observe the radial line indicating current time",
+        "Observe the edge where passed time (greyed) meets remaining time",
+        "Verify the radial line is positioned exactly at this edge",
+        "Verify there is no gap between the line and the passed time boundary",
+        "Verify there is no overlap where the line extends into remaining time",
+        "Change system time and verify alignment remains accurate"
+      ],
+      "passes": true
+    },
+    {
+      "category": "annulus",
+      "description": "Radial time indicator updates position in sync with passed time coloring",
+      "steps": [
+        "Observe annulus as time progresses (or adjust system clock incrementally)",
+        "Verify the radial line and the passed time edge move together",
+        "Verify at no point does the line lag behind or advance ahead of the passed time fill",
+        "Verify both update at the same rate"
+      ],
+      "passes": true
+    }
+  ]
+}

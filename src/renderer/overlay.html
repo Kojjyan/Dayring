@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DayRing Overlay</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: transparent;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    }
+
+    .annulus-container {
+      /* Container is 74% of window to leave room for time label outside the ring */
+      /* Window has 35% padding (1.35x), so 1/1.35 ≈ 0.74 keeps ring at expected size */
+      width: 74%;
+      height: 74%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      overflow: visible;
+    }
+
+    .annulus-container.visible {
+      opacity: var(--annulus-opacity, 0.8);
+    }
+
+    .annulus-container.visible.hover {
+      opacity: var(--annulus-hover-opacity, 1);
+    }
+
+    /* Task labels container */
+    .task-labels {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .task-label {
+      position: absolute;
+      font-size: calc(var(--container-size, 200) * 0.05px);
+      font-weight: 500;
+      color: white;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 2px 6px;
+      border-radius: 3px;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      max-width: 40%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      z-index: 20;
+    }
+
+    .current-time-label {
+      position: absolute;
+      font-size: calc(var(--container-size, 200) * 0.065px);
+      font-weight: 600;
+      color: white;
+      text-shadow:
+        0 0 4px rgba(0, 0, 0, 0.9),
+        0 0 8px rgba(0, 0, 0, 0.7),
+        0 1px 2px rgba(0, 0, 0, 0.9),
+        0 0 12px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      opacity: 0.95;
+      z-index: 10;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .current-time-label .ampm {
+      font-size: 0.85em;
+      font-weight: 500;
+    }
+
+    .annulus-container.hover .task-label {
+      opacity: 1;
+    }
+
+    .annulus {
+      width: 90%;
+      height: 90%;
+      border-radius: 50%;
+      position: relative;
+      background: conic-gradient(from 0deg,
+          #4a90d9 0deg,
+          #4a90d9 180deg,
+          #6ba3e0 180deg,
+          #6ba3e0 360deg);
+      opacity: 0.8;
+    }
+
+    .annulus::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 66.67%;
+      height: 66.67%;
+      border-radius: 50%;
+      background: transparent;
+    }
+
+    .annulus-inner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 55%;
+      height: 55%;
+      border-radius: 50%;
+      background: rgba(30, 30, 30, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      z-index: 5;
+    }
+
+    .hours-remaining {
+      font-size: calc(var(--container-size, 200) * 0.12px);
+      font-weight: 600;
+    }
+
+    .remaining-label {
+      font-size: calc(var(--container-size, 200) * 0.055px);
+      opacity: 0.7;
+      margin-top: 2px;
+    }
+
+
+    /* Time indicator now rendered as SVG line for pixel-perfect alignment */
+
+    /* SVG-based annulus for proper ring rendering */
+    svg.annulus-ring {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    #background-ring {
+      transition: opacity 0.3s ease-in-out;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="annulus-container">
+    <svg class="annulus-ring" viewBox="-10 -10 200 200">
+      <defs>
+        <!-- Task arcs will be added dynamically -->
+      </defs>
+      <!-- Background ring (unallocated time) with gap at top -->
+      <circle id="background-ring" cx="90" cy="90" r="75" fill="none" stroke="#4a90d9" stroke-width="30"
+        stroke-dasharray="457.24 14" stroke-dashoffset="-7" opacity="0.8" />
+      <!-- Wake fade-in effect: gradient arcs at start of ring -->
+      <g id="wake-fade-group" style="display: none;"></g>
+      <!-- Sleep fade-out effect: gradient arcs at end of ring -->
+      <g id="sleep-fade-group" style="display: none;"></g>
+      <!-- Elapsed time overlay - fully opaque to prevent color blending with unallocated time -->
+      <circle id="elapsed-arc" cx="90" cy="90" r="75" fill="none" stroke="#666" stroke-width="30"
+        stroke-dasharray="0 471" opacity="1" />
+      <!-- Elapsed time fade effect: matches wake fade-in gradient -->
+      <g id="elapsed-fade-group" style="display: none;"></g>
+      <!-- Time indicator line - rendered in SVG for pixel-perfect alignment with elapsed arc -->
+      <line id="time-indicator-svg" x1="90" y1="5" x2="90" y2="30" stroke="white" stroke-width="3"
+        stroke-linecap="round" />
+    </svg>
+
+    <!-- Time indicator now rendered as SVG line inside the annulus-ring -->
+
+    <!-- Task labels (appear on hover) -->
+    <div class="task-labels" id="task-labels"></div>
+
+    <!-- Current time label next to radial indicator -->
+    <div id="current-time-label" class="current-time-label"></div>
+
+    <!-- Center display -->
+    <div class="annulus-inner">
+      <div class="hours-remaining" id="hours-display">8:00</div>
+      <div class="remaining-label">remaining</div>
+    </div>
+  </div>
+
+  <script>
+    // Default wake/sleep times - set to null to prevent hardcoded defaults
+    let wakeTime = null;
+    let sleepTime = null;
+    let currentOpacity = 80; // 0-100
+    let currentSize = 200; // px
+    let currentRotation = 0; // 0-359 degrees
+    let tasks = [];
+    let unallocatedColor = '#4a90d9';
+    let passedTimeColor = '#666666';
+    let isFadedOut = false;
+    let showTimeRemaining = true;
+
+    // Gap constants for wake/sleep separation
+    const CIRCUMFERENCE = 2 * Math.PI * 75; // ~471.24
+    const GAP_SIZE = 14; // Gap size in SVG units (~3% of ring, ~11 degrees)
+    const GAP_HALF = GAP_SIZE / 2;
+    const VISIBLE_ARC = CIRCUMFERENCE - GAP_SIZE;
+
+    function timeToMinutes(hour, minute) {
+      return hour * 60 + minute;
+    }
+
+    // Parse time string like "8:30 AM" to { hour, minute } in 24h format
+    function parseTimeString(timeStr) {
+      const match = timeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+      if (!match) return null;
+      let hour = parseInt(match[1], 10);
+      const minute = parseInt(match[2], 10);
+      const period = match[3].toUpperCase();
+
+      if (period === 'PM' && hour !== 12) hour += 12;
+      if (period === 'AM' && hour === 12) hour = 0;
+
+      return { hour, minute };
+    }
+
+    function getWakingMinutes() {
+      const wakeMinutes = timeToMinutes(wakeTime.hour, wakeTime.minute);
+      let sleepMinutes = timeToMinutes(sleepTime.hour, sleepTime.minute);
+
+      // Handle overnight sleep (e.g., sleep at 2 AM)
+      if (sleepMinutes <= wakeMinutes) {
+        sleepMinutes += 24 * 60;
+      }
+
+      return sleepMinutes - wakeMinutes;
+    }
+
+    function getCurrentProgress() {
+      const now = new Date();
+      const currentMinutes = timeToMinutes(now.getHours(), now.getMinutes());
+      const wakeMinutes = timeToMinutes(wakeTime.hour, wakeTime.minute);
+      let sleepMinutes = timeToMinutes(sleepTime.hour, sleepTime.minute);
+
+      if (sleepMinutes <= wakeMinutes) {
+        sleepMinutes += 24 * 60;
+      }
+
+      let adjustedCurrent = currentMinutes;
+      if (currentMinutes < wakeMinutes) {
+        adjustedCurrent += 24 * 60;
+      }
+
+      const elapsed = adjustedCurrent - wakeMinutes;
+      const total = sleepMinutes - wakeMinutes;
+
+      return Math.min(Math.max(elapsed / total, 0), 1);
+    }
+
+    function getRemainingTime() {
+      const total = getWakingMinutes();
+      const progress = getCurrentProgress();
+      const remainingMinutes = Math.max(0, total * (1 - progress));
+      const hours = Math.floor(remainingMinutes / 60);
+      const minutes = Math.floor(remainingMinutes % 60);
+      return { hours, minutes };
+    }
+
+    // Check if current time is within waking hours
+    function isWithinWakingHours() {
+      if (!wakeTime || !sleepTime) return false;
+      const now = new Date();
+      const currentMinutes = timeToMinutes(now.getHours(), now.getMinutes());
+      const wakeMinutes = timeToMinutes(wakeTime.hour, wakeTime.minute);
+      let sleepMinutes = timeToMinutes(sleepTime.hour, sleepTime.minute);
+
+      // Handle overnight sleep
+      if (sleepMinutes <= wakeMinutes) {
+        // Sleep is after midnight
+        if (currentMinutes >= wakeMinutes || currentMinutes < sleepMinutes) {
+          return true;
+        }
+        return false;
+      }
+
+      // Normal case: wake before sleep
+      return currentMinutes >= wakeMinutes && currentMinutes < sleepMinutes;
+    }
+
+    // Handle fade-out/fade-in based on time
+    function checkFadeState() {
+      const container = document.querySelector('.annulus-container');
+      const withinHours = isWithinWakingHours();
+
+      if (!withinHours && !isFadedOut) {
+        // Past sleep time - fade out
+        container.classList.remove('visible');
+        isFadedOut = true;
+      } else if (withinHours && isFadedOut) {
+        // Wake time reached - fade in
+        container.classList.add('visible');
+        isFadedOut = false;
+      } else if (withinHours && !isFadedOut && !container.classList.contains('visible')) {
+        // Ensure visible during waking hours
+        container.classList.add('visible');
+      }
+    }
+
+    // Get task position as percentage of waking day (0-1 for start, 0-1 for end)
+    function getTaskPosition(task) {
+      if (!wakeTime || !sleepTime) return null;
+      const startTime = parseTimeString(task.startTime);
+      const endTime = parseTimeString(task.endTime);
+      if (!startTime || !endTime) return null;
+
+      const wakeMinutes = timeToMinutes(wakeTime.hour, wakeTime.minute);
+      let sleepMinutes = timeToMinutes(sleepTime.hour, sleepTime.minute);
+      if (sleepMinutes <= wakeMinutes) sleepMinutes += 24 * 60;
+
+      const totalWaking = sleepMinutes - wakeMinutes;
+
+      let taskStartMinutes = timeToMinutes(startTime.hour, startTime.minute);
+      let taskEndMinutes = timeToMinutes(endTime.hour, endTime.minute);
+
+      // Handle overnight tasks (end time before start time means task spans midnight)
+      if (taskEndMinutes < taskStartMinutes) {
+        taskEndMinutes += 24 * 60;
+      }
+
+      // Adjust for overnight wake/sleep schedule
+      if (taskStartMinutes < wakeMinutes) taskStartMinutes += 24 * 60;
+      if (taskEndMinutes < wakeMinutes) taskEndMinutes += 24 * 60;
+
+      const startProgress = (taskStartMinutes - wakeMinutes) / totalWaking;
+      const endProgress = (taskEndMinutes - wakeMinutes) / totalWaking;
+
+      // Check if task is within waking hours
+      if (startProgress < 0 || startProgress > 1 || endProgress < 0 || endProgress > 1) {
+        return null;
+      }
+
+      return { start: startProgress, end: endProgress };
+    }
+
+    // Render a solid task arc with hard edges
+    function renderTaskArc(svg, insertBefore, startOffset, length, color) {
+      const opacity = currentOpacity >= 100 ? 1 : 0.8;
+      const arc = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      arc.classList.add('task-arc');
+      arc.setAttribute('cx', '90');
+      arc.setAttribute('cy', '90');
+      arc.setAttribute('r', '75');
+      arc.setAttribute('fill', 'none');
+      arc.setAttribute('stroke', color);
+      arc.setAttribute('stroke-width', '30');
+      arc.setAttribute('stroke-dasharray', `${length} ${CIRCUMFERENCE}`);
+      arc.setAttribute('stroke-dashoffset', `-${startOffset}`);
+      arc.setAttribute('opacity', opacity.toFixed(3));
+      svg.insertBefore(arc, insertBefore);
+    }
+
+    // Render task arcs - solid arcs only, no gradients
+    function renderTasks() {
+      const svg = document.querySelector('.annulus-ring');
+      // Remove existing task arcs
+      svg.querySelectorAll('.task-arc').forEach(el => el.remove());
+
+      // Sort tasks by start time
+      const sortedTasks = [...tasks]
+        .map(t => ({ ...t, pos: getTaskPosition(t) }))
+        .filter(t => t.pos !== null)
+        .sort((a, b) => a.pos.start - b.pos.start);
+
+      const elapsedArc = document.getElementById('elapsed-arc');
+
+      // Process each task - render solid arc with hard edges
+      sortedTasks.forEach((task) => {
+        const startOffset = task.pos.start * VISIBLE_ARC + GAP_HALF;
+        const endOffset = task.pos.end * VISIBLE_ARC + GAP_HALF;
+        const arcLength = endOffset - startOffset;
+
+        // Solid arc for task with hard edges
+        renderTaskArc(svg, elapsedArc, startOffset, arcLength, task.color);
+      });
+
+      // Render task labels
+      renderTaskLabels();
+    }
+
+    // Blend two hex colors by ratio (0 = fromColor, 1 = toColor)
+    function blendColors(color1, color2, ratio) {
+      // Parse hex colors
+      const c1 = hexToRgb(color1);
+      const c2 = hexToRgb(color2);
+      if (!c1 || !c2) return color1;
+
+      // Linear interpolation
+      const r = Math.round(c1.r + (c2.r - c1.r) * ratio);
+      const g = Math.round(c1.g + (c2.g - c1.g) * ratio);
+      const b = Math.round(c1.b + (c2.b - c1.b) * ratio);
+
+      return rgbToHex(r, g, b);
+    }
+
+    // Convert hex color to RGB object
+    function hexToRgb(hex) {
+      // Handle shorthand (#RGB) and full (#RRGGBB) formats
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      if (result) {
+        return {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        };
+      }
+      // Try shorthand
+      const short = /^#?([a-f\d])([a-f\d])([a-f\d])$/i.exec(hex);
+      if (short) {
+        return {
+          r: parseInt(short[1] + short[1], 16),
+          g: parseInt(short[2] + short[2], 16),
+          b: parseInt(short[3] + short[3], 16)
+        };
+      }
+      return null;
+    }
+
+    // Convert RGB values to hex color
+    function rgbToHex(r, g, b) {
+      return '#' + [r, g, b].map(x => {
+        const hex = x.toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+      }).join('');
+    }
+
+    // Render task labels positioned at midpoint of each task arc, with collision avoidance
+    function renderTaskLabels() {
+      const labelsContainer = document.getElementById('task-labels');
+      labelsContainer.innerHTML = '';
+
+      // Use percentages for responsive positioning (viewBox is -10 -10 200 200)
+      const centerPct = 50; // center at 50%
+      const baseRadiusPct = 37.5; // 75/200 * 100 = 37.5%
+
+      // Gap calculations for label positioning
+      const gapDegrees = (GAP_SIZE / CIRCUMFERENCE) * 360;
+      const gapHalfDegrees = gapDegrees / 2;
+      const visibleDegrees = 360 - gapDegrees;
+
+      // Collect label data with positions
+      const labelData = [];
+      tasks.forEach(task => {
+        const pos = getTaskPosition(task);
+        if (!pos || !task.name) return; // Skip if outside waking hours or no name
+
+        // Calculate midpoint progress of the task arc
+        const midProgress = (pos.start + pos.end) / 2;
+        // Convert to angle accounting for gap:
+        // -90 puts 0 at top, then add gap offset and scale by visible degrees
+        const angleDeg = -90 + gapHalfDegrees + midProgress * visibleDegrees + currentRotation;
+
+        labelData.push({
+          task,
+          angleDeg,
+          midProgress,
+          radiusPct: baseRadiusPct
+        });
+      });
+
+      // Sort by angle for collision detection
+      labelData.sort((a, b) => a.angleDeg - b.angleDeg);
+
+      // Collision avoidance: adjust radius for labels that are too close angularly
+      // Minimum angular separation (in degrees) before considering overlap
+      const minAngleSep = 20; // ~20 degrees apart to avoid overlap
+      const radiusStep = 8; // Move labels inward/outward by this much when overlapping
+
+      for (let i = 1; i < labelData.length; i++) {
+        const prev = labelData[i - 1];
+        const curr = labelData[i];
+
+        // Calculate angular difference (handle wrap-around)
+        let angleDiff = Math.abs(curr.angleDeg - prev.angleDeg);
+        if (angleDiff > 180) angleDiff = 360 - angleDiff;
+
+        // If too close, alternate radius to avoid overlap
+        if (angleDiff < minAngleSep) {
+          // Alternate between inner and outer positions
+          if (prev.radiusPct === baseRadiusPct) {
+            curr.radiusPct = baseRadiusPct - radiusStep; // Move inward
+          } else if (prev.radiusPct < baseRadiusPct) {
+            curr.radiusPct = baseRadiusPct + radiusStep; // Move outward
+          } else {
+            curr.radiusPct = baseRadiusPct - radiusStep; // Move inward
+          }
+        }
+      }
+
+      // Check wrap-around collision (last vs first)
+      if (labelData.length > 1) {
+        const first = labelData[0];
+        const last = labelData[labelData.length - 1];
+        let angleDiff = Math.abs((first.angleDeg + 360) - last.angleDeg);
+        if (angleDiff > 180) angleDiff = 360 - angleDiff;
+
+        if (angleDiff < minAngleSep && first.radiusPct === last.radiusPct) {
+          first.radiusPct = baseRadiusPct + radiusStep;
+        }
+      }
+
+      // Create label elements with adjusted positions
+      labelData.forEach(({ task, angleDeg, radiusPct }) => {
+        const angleRad = angleDeg * (Math.PI / 180);
+        const xPct = centerPct + radiusPct * Math.cos(angleRad);
+        const yPct = centerPct + radiusPct * Math.sin(angleRad);
+
+        const label = document.createElement('div');
+        label.className = 'task-label';
+        label.textContent = task.name;
+        label.style.left = `${xPct}%`;
+        label.style.top = `${yPct}%`;
+
+        labelsContainer.appendChild(label);
+      });
+    }
+
+    // Find optimal position for current time label to follow radial line without clipping or colliding
+    function findOptimalTimeLabelPosition(radialAngleDeg, gapHalfDegrees, visibleDegrees, progress) {
+      const centerX = 50;
+      const centerY = 50;
+
+      // Base radius - position label just outside the ring's outer edge
+      // Ring outer edge is at r=90 in viewBox 200 (center at 90, ring r=75, stroke-width=30)
+      // 90/200 = 45%, so use 50% as minimum to place label just outside the ring
+      const baseRadiusPct = 50;
+
+      // Extra radius for left/right positions where horizontal text needs more space
+      // cos(angle) is 1 at right (0°), -1 at left (180°), 0 at top/bottom
+      const extraRadiusPct = 2;
+      const angleRad = radialAngleDeg * (Math.PI / 180);
+      const dynamicRadiusPct = baseRadiusPct + extraRadiusPct * Math.abs(Math.cos(angleRad));
+
+      // Calculate position directly at the radial line angle, outside the ring
+      const rad = radialAngleDeg * (Math.PI / 180);
+      return {
+        x: centerX + dynamicRadiusPct * Math.cos(rad),
+        y: centerY + dynamicRadiusPct * Math.sin(rad)
+      };
+    }
+
+    function updateDisplay() {
+      if (!wakeTime || !sleepTime) return;
+      const progress = getCurrentProgress();
+
+      // Calculate elapsed arc length accounting for gap
+      const elapsed = progress * VISIBLE_ARC;
+
+      // Hide fade groups (wake/sleep fades removed - hard edges only)
+      const elapsedFadeGroup = document.getElementById('elapsed-fade-group');
+      elapsedFadeGroup.style.display = 'none';
+      elapsedFadeGroup.innerHTML = '';
+
+      // Simple elapsed arc rendering with hard edges
+      const elapsedArc = document.getElementById('elapsed-arc');
+      elapsedArc.setAttribute('stroke-dasharray', `${elapsed} ${CIRCUMFERENCE}`);
+      elapsedArc.setAttribute('stroke-dashoffset', `-${GAP_HALF}`);
+
+      // Update background ring - starts after elapsed, ends at sleep time (no fades)
+      const backgroundRing = document.getElementById('background-ring');
+      if (backgroundRing) {
+        const bgStart = GAP_HALF + elapsed;
+        const bgEnd = GAP_HALF + VISIBLE_ARC;
+        const bgLength = Math.max(0, bgEnd - bgStart);
+        if (bgLength > 0) {
+          backgroundRing.setAttribute('stroke-dasharray', `${bgLength} ${CIRCUMFERENCE}`);
+          backgroundRing.setAttribute('stroke-dashoffset', `-${bgStart}`);
+        } else {
+          backgroundRing.setAttribute('stroke-dasharray', `0 ${CIRCUMFERENCE}`);
+        }
+      }
+
+      // Update SVG time indicator - uses same math as elapsed arc for perfect alignment
+      // The indicator rotates around center (90, 90) to match the exact position where elapsed ends
+      const indicator = document.getElementById('time-indicator-svg');
+      const gapDegrees = (GAP_SIZE / CIRCUMFERENCE) * 360;
+      const gapHalfDegrees = gapDegrees / 2;
+      const visibleDegrees = 360 - gapDegrees;
+      // The indicator line points toward viewBox top (90° in math coords), but arc positions
+      // are calculated from circle start at 0° (right side). Subtract 90 to align with arc end.
+      const indicatorAngle = gapHalfDegrees + progress * visibleDegrees + 90;
+      indicator.setAttribute('transform', `rotate(${indicatorAngle} 90 90)`);
+
+      // Update current time label position - dynamically placed to avoid overlapping UI elements
+      const timeLabel = document.getElementById('current-time-label');
+      if (timeLabel) {
+        const now = new Date();
+        let hours = now.getHours();
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const h12 = hours % 12 || 12;
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        timeLabel.innerHTML = `${h12}:${minutes}<br><span class="ampm">${ampm}</span>`;
+
+        // Calculate base angle matching the radial line
+        const baseAngleDeg = -90 + currentRotation + gapHalfDegrees + (progress * visibleDegrees);
+
+        // Find optimal position for current time label avoiding:
+        // 1. The radial indicator line itself
+        // 2. The "X hrs remaining" text in the center (which sits at angles ~-45 to ~45 from vertical)
+        // 3. Task labels (if visible on hover)
+
+        const labelPosition = findOptimalTimeLabelPosition(baseAngleDeg, gapHalfDegrees, visibleDegrees, progress);
+
+        timeLabel.style.left = `${labelPosition.x}%`;
+        timeLabel.style.top = `${labelPosition.y}%`;
+      }
+
+      // Update time remaining display (H:MM format, no leading zero for hours)
+      const { hours, minutes } = getRemainingTime();
+      const minutesPadded = String(minutes).padStart(2, '0');
+      document.getElementById('hours-display').textContent = `${hours}:${minutesPadded}`;
+    }
+
+    function applySettings(settings) {
+      if (settings.wakeTime) {
+        wakeTime = settings.wakeTime;
+      }
+      if (settings.sleepTime) {
+        sleepTime = settings.sleepTime;
+      }
+      if (settings.opacity !== undefined) {
+        currentOpacity = settings.opacity;
+        document.documentElement.style.setProperty('--annulus-opacity', currentOpacity / 100);
+        const hoverOpacity = 100;
+        document.documentElement.style.setProperty('--annulus-hover-opacity', hoverOpacity / 100);
+        // At 100% use 1 so overlay is fully opaque; else preserve prior look (0.8)
+        const arcOp = currentOpacity >= 100 ? '1' : '0.8';
+        const bg = document.getElementById('background-ring');
+        // Elapsed arc always fully opaque to prevent color blending with unallocated time
+        // The overall container opacity controls visibility; elapsed arc itself should be solid
+        const el = document.getElementById('elapsed-arc');
+        if (bg) bg.setAttribute('opacity', arcOp);
+        if (el) el.setAttribute('opacity', '1');
+      }
+      if (settings.unallocatedColor) {
+        unallocatedColor = settings.unallocatedColor;
+        updateUnallocatedColor();
+      }
+      if (settings.passedTimeColor) {
+        passedTimeColor = settings.passedTimeColor;
+        updatePassedTimeColor();
+      }
+      if (settings.tasks) {
+        tasks = settings.tasks;
+        renderTasks();
+      }
+      if (settings.size !== undefined) {
+        currentSize = settings.size;
+        document.documentElement.style.setProperty('--container-size', currentSize);
+      }
+      if (settings.rotation !== undefined) {
+        currentRotation = settings.rotation;
+        applyRotation();
+      }
+      if (settings.showTimeRemaining !== undefined) {
+        showTimeRemaining = settings.showTimeRemaining;
+        const inner = document.querySelector('.annulus-inner');
+        if (inner) inner.style.display = showTimeRemaining ? '' : 'none';
+      }
+      updateFadeEffects();
+      updateDisplay();
+      checkFadeState();
+    }
+
+    function updateUnallocatedColor() {
+      // Update the background ring (unallocated time) color
+      const backgroundRing = document.getElementById('background-ring');
+      if (backgroundRing) {
+        backgroundRing.setAttribute('stroke', unallocatedColor);
+      }
+    }
+
+    function updatePassedTimeColor() {
+      // Update the elapsed arc color
+      const elapsedArc = document.getElementById('elapsed-arc');
+      if (elapsedArc) {
+        elapsedArc.setAttribute('stroke', passedTimeColor);
+      }
+    }
+
+    // Smooth easing function for gradient interpolation (ease-in-out)
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    // Update fade effect arcs - wake/sleep fades removed, hard edges only
+    function updateFadeEffects() {
+      const wakeFadeGroup = document.getElementById('wake-fade-group');
+      const sleepFadeGroup = document.getElementById('sleep-fade-group');
+      const backgroundRing = document.getElementById('background-ring');
+
+      // Hide and clear all fade groups - no fades for wake/sleep (hard edges)
+      wakeFadeGroup.innerHTML = '';
+      wakeFadeGroup.style.display = 'none';
+      sleepFadeGroup.innerHTML = '';
+      sleepFadeGroup.style.display = 'none';
+
+      // Background ring spans entire visible arc with hard edges
+      const bgOpacity = currentOpacity >= 100 ? 1 : 0.8;
+      if (backgroundRing) {
+        backgroundRing.setAttribute('stroke-dasharray', `${VISIBLE_ARC} ${GAP_SIZE}`);
+        backgroundRing.setAttribute('stroke-dashoffset', `-${GAP_HALF}`);
+        backgroundRing.setAttribute('opacity', bgOpacity.toFixed(3));
+      }
+    }
+
+    function applyRotation() {
+      // The SVG already has rotate(-90deg) to put 0 at top
+      // We add the user's rotation to shift the wake/sleep point
+      const svg = document.querySelector('.annulus-ring');
+      if (svg) {
+        svg.style.transform = `rotate(${-90 + currentRotation}deg)`;
+      }
+    }
+
+    function handleHoverChange(isHovering) {
+      const container = document.querySelector('.annulus-container');
+      const bg = document.getElementById('background-ring');
+      if (isHovering) {
+        container.classList.add('hover');
+        // Set SVG element opacity to 1 when hovering for full opacity
+        if (bg) bg.setAttribute('opacity', '1');
+      } else {
+        container.classList.remove('hover');
+        // Restore SVG element opacity based on user's opacity setting
+        const arcOp = currentOpacity >= 100 ? '1' : '0.8';
+        if (bg) bg.setAttribute('opacity', arcOp);
+      }
+    }
+
+    function fadeInAnnulus() {
+      // Small delay to ensure everything is rendered before fade-in
+      setTimeout(() => {
+        document.querySelector('.annulus-container').classList.add('visible');
+      }, 100);
+    }
+
+    // Load settings on startup
+    async function init() {
+      if (window.dayring) {
+        try {
+          // Listen for settings updates
+          window.dayring.onSettingsUpdated(applySettings);
+          // Listen for hover changes
+          window.dayring.onHoverChanged(handleHoverChange);
+
+          const settings = await window.dayring.getSettings();
+          if (settings) {
+            applySettings(settings);
+            // Only fade in after settings are applied
+            fadeInAnnulus();
+          }
+        } catch (e) {
+          console.error('Failed to load settings:', e);
+        }
+      }
+    }
+
+    // Drag support - only active when configure window is open
+    let isDragging = false;
+    let dragEnabled = false;
+
+    function initDragSupport() {
+      const container = document.querySelector('.annulus-container');
+
+      container.addEventListener('mousedown', (e) => {
+        if (!window.dayring || !dragEnabled) return;
+        isDragging = true;
+        window.dayring.dragStart(e.screenX, e.screenY);
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging || !window.dayring) return;
+        window.dayring.dragMove(e.screenX, e.screenY);
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (!isDragging || !window.dayring) return;
+        isDragging = false;
+        window.dayring.dragEnd();
+      });
+
+      // Listen for drag mode changes
+      if (window.dayring && window.dayring.onDragModeChanged) {
+        window.dayring.onDragModeChanged((enabled) => {
+          dragEnabled = enabled;
+          container.style.cursor = enabled ? 'move' : 'default';
+        });
+      }
+    }
+
+    init();
+    initDragSupport();
+
+    // Update every minute
+    setInterval(() => {
+      updateDisplay();
+      checkFadeState();
+    }, 60000);
+  </script>
+</body>
+
+</html>

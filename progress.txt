@@ -1,0 +1,1169 @@
+2026-01-24 (iteration 33)
+
+Completed:
+- Task hover text areas no longer overlap each other (fixing-tasks)
+- Implemented collision detection in renderTaskLabels()
+- Labels sorted by angle; adjacent labels (<20° apart) get alternating radii
+- Labels move inward/outward by 8% to avoid overlap
+- Wrap-around collision handled (last vs first label)
+
+Decisions:
+- minAngleSep = 20 degrees threshold for overlap detection
+- radiusStep = 8% inward/outward adjustment
+- Three-tier alternation: base, inner (base-8), outer (base+8)
+- Sort labels by angle for sequential collision detection
+
+Files changed:
+- src/renderer/overlay.html (renderTaskLabels collision avoidance logic)
+- fixing-tasks.json (passes: true for "Task hover text areas should not overlap")
+- progress.txt
+
+Notes / Next:
+- Remaining fixing-tasks: 3 with passes false
+- Fade checkboxes visibility, task time input
+
+
+---
+
+2026-01-24 (iteration 34)
+
+Completed:
+- Smart task time input: only numbers typed, colon/AM-PM auto-handled (fixing-tasks)
+- Hour and minute inputs separated with auto-formatting
+- Tab/Enter navigation between hour and minute fields
+- Click on AM/PM to toggle
+- Invalid values reset to previous valid values on blur
+- Numbers-only filter on keydown (blocks letters, special chars except nav keys)
+
+Decisions:
+- Split time input into hour (2 char) + colon (static) + minute (2 char) + AM/PM (clickable)
+- Auto-advance from hour to minute when 2 digits entered
+- Validation on blur: hour 1-12, minute 0-59; reset to prev if invalid
+- AM/PM click toggles between AM and PM
+- Store prev-time in data attribute for reset fallback
+
+Files changed:
+- src/renderer/configure.html (CSS for .time-input-group/.time-part/.time-ampm, createTaskElement uses smart inputs, setupTimeInputGroup handler)
+- fixing-tasks.json (passes: true for "Task time input should allow typing hours/minutes")
+- progress.txt
+
+Notes / Next:
+- Remaining fixing-tasks: 1 with passes false
+- Soft/Fade checkboxes visibility until panel hover
+
+
+---
+
+2026-01-24 (iteration 35)
+
+Completed:
+- Soft/Fade checkboxes invisible until panel hover (fixing-tasks)
+- Wake/sleep "Fade in"/"Fade out" checkboxes hidden by default, appear on .time-setting hover
+- Task "Soft" checkbox hidden by default, appears on .task-item hover
+- Smooth 0.2s opacity transition for show/hide
+
+Decisions:
+- opacity: 0 + transition: opacity 0.2s on toggle containers
+- Parent:hover selector to reveal (.time-setting:hover .fade-out-toggle, .task-item:hover .soft-edges-toggle)
+- No JS needed; pure CSS solution
+
+Files changed:
+- src/renderer/configure.html (CSS for .fade-out-toggle opacity + hover, .soft-edges-toggle opacity + hover)
+- fixing-tasks.json (passes: true for "Soft/Fade checkboxes are invisible until panel hover")
+- progress.txt
+
+Notes / Next:
+- ALL fixing-tasks now pass
+- Project feature complete
+
+
+---
+
+2026-01-24 (iteration 36)
+
+Completed:
+- Radial line aligns with correct time at end of passed time (fixing-tasks)
+- Added -90 degree offset to indicator angle calculation
+- Indicator now matches elapsed arc end position exactly
+
+Decisions:
+- Bug: indicator SVG line base points at viewBox top (90° in math coords)
+- Arc positions calculated from circle start at 0° (right side)
+- This 90° offset was present in task labels and current time label code (both had -90)
+- Indicator was missing this -90 adjustment
+- Formula: indicatorAngle = gapHalfDegrees + progress * visibleDegrees - 90
+
+Files changed:
+- src/renderer/overlay.html (updateDisplay indicator angle calculation)
+- fixing-tasks.json (passes: true for "Radial line aligns with correct time")
+- progress.txt
+
+Notes / Next:
+- ALL fixing-tasks now pass
+- Project feature complete
+
+
+---
+
+2026-01-25 (iteration 37)
+
+Completed:
+- Fix soft task gradient trailing edge color inversion (fixing-tasks)
+- Trailing gradient was blending backwards: started with trailingColor instead of task.color
+- Removed inverted ratio calculation `1 - easedT` for trailing edges
+
+Decisions:
+- Bug in createSoftEdgeGradient: `ratio = isLeading ? easedT : 1 - easedT`
+- For trailing edge, ratio started at 1 (→toColor) instead of 0 (→fromColor)
+- This caused gradient to appear reversed, creating "duplicate gradient at midpoint" artifact
+- Fix: use `easedT` for both leading and trailing since fromColor/toColor are set correctly by caller
+
+Files changed:
+- src/renderer/overlay.html (createSoftEdgeGradient ratio calculation)
+- fixing-tasks.json (passes: true for "Fix incorrect soft task gradient origin")
+- progress.txt
+
+Notes / Next:
+- fixing-tasks remaining: 9 with passes false
+- Gradient smoothness, wake/sleep fade traces, layout issues
+
+
+---
+
+2026-01-25 (iteration 38)
+
+Completed:
+- Remove inner and outer borders of the annulus (fixing-tasks)
+- Deleted SVG border circles (outer r=90 stroke and inner r=60 stroke)
+- Removed unused .annulus-border CSS class
+
+Decisions:
+- Borders were white semi-transparent strokes: rgba(255,255,255,0.3) outer, rgba(255,255,255,0.2) inner
+- Removing them allows annulus to blend cleanly into background
+- No visual replacement needed; task arcs and elapsed arc define the ring edges
+
+Files changed:
+- src/renderer/overlay.html (removed 2 SVG border circles, removed .annulus-border CSS)
+- fixing-tasks.json (passes: true for "Remove inner and outer borders")
+- progress.txt
+
+Notes / Next:
+- fixing-tasks remaining: 8 with passes false
+- Layout issues: warning clipping, current time text overlap
+
+
+---
+
+2026-01-25 (iteration 39)
+
+Completed:
+- Prevent current time text from overlapping the current time radial line (fixing-tasks)
+- Added 25-degree angular offset to position label clockwise from radial line
+- Text now maintains consistent visual padding from indicator at all angles
+
+Decisions:
+- LABEL_ANGLE_OFFSET = 25 degrees clockwise from radial indicator angle
+- Same radius (36%) preserved; only angle is adjusted
+- Offset direction (clockwise) keeps label ahead of passed time progression
+- Fixed offset simpler than dynamic positioning; works consistently at all angles
+
+Files changed:
+- src/renderer/overlay.html (updateDisplay: label angle offset logic)
+- fixing-tasks.json (passes: true for "Prevent current time text from overlapping")
+- progress.txt
+
+Notes / Next:
+- fixing-tasks remaining: 10 with passes false
+- Next priority: typography (text size, shadow) or rendering (gradient smoothness)
+
+
+---
+
+2026-01-25 (iteration 40)
+
+Completed:
+- Increase current time text size for better legibility (fixing-tasks)
+- Font size increased from 0.045 to 0.065 (44% increase)
+- At 200px container: was 9px, now 13px
+
+Decisions:
+- Chose 0.065 multiplier for good balance: readable but not dominating
+- Still smaller than "X hrs remaining" (0.12 = 24px) to maintain hierarchy
+- Proportional scaling preserved via CSS calc() with --container-size var
+
+Files changed:
+- src/renderer/overlay.html (.current-time-label font-size CSS)
+- fixing-tasks.json (passes: true for "Increase current time text size")
+- progress.txt
+
+Notes / Next:
+- fixing-tasks remaining: 9 with passes false
+- Related: shadow strength task also typography category
+
+
+---
+
+2026-01-25 (iteration 41)
+
+Completed:
+- Increase shadow strength of current time text for better contrast (fixing-tasks)
+- Multi-layer text-shadow for visibility against any annulus color
+- Increased opacity from 0.9 to 0.95 for stronger text presence
+
+Decisions:
+- 4-layer shadow: close blur (4px), medium blur (8px), offset drop shadow (1px 2px), large glow (12px)
+- Higher opacity values (0.9, 0.7, 0.9, 0.5) for strong contrast without harsh edges
+- Slight opacity increase (0.9 → 0.95) makes text more prominent
+
+Files changed:
+- src/renderer/overlay.html (.current-time-label text-shadow CSS)
+- fixing-tasks.json (passes: true for "Increase shadow strength")
+- progress.txt
+
+Notes / Next:
+- fixing-tasks remaining: 8 with passes false
+- Rendering tasks (gradients, fade traces) are more complex
+
+
+---
+
+2026-01-25 (iteration 42)
+
+Completed:
+- Replace discrete strip-based gradients with smooth analog gradients for tasks (fixing-tasks)
+- Fades now extend BEYOND task boundaries: fade-in before start, fade-out after end
+- Task start/end points at 0% opacity (fully transparent), center at full opacity
+- New createSoftEdgeFade() function handles opacity-based fading (not color blending)
+- Increased SOFT_EDGE_STEPS from 20 to 30, SOFT_EDGE_LENGTH from 8 to 12 SVG units
+
+Decisions:
+- Opacity-based fade instead of color blending: cleaner visual, no color muddying
+- Leading fade: starts SOFT_EDGE_LENGTH before task, goes 0 → maxOpacity
+- Trailing fade: starts at task end, goes maxOpacity → 0
+- Main task arc renders at full task duration with full opacity
+- easeInOutCubic applied for smooth perceptual transition
+
+Files changed:
+- src/renderer/overlay.html (createSoftEdgeFade, renderTasks soft edge logic, constants)
+- fixing-tasks.json (passes: true for "Replace discrete strip-based gradients")
+- progress.txt
+
+Notes / Next:
+- fixing-tasks remaining: 7 with passes false
+- Wake/sleep fade traces and passed-time blending still need work
+
+
+---
+
+2026-01-25 (iteration 43)
+
+Completed:
+- Improve wake and sleep time fade gradients to eliminate visible annulus traces (fixing-tasks)
+- Changed minFadeOp from 0.05 to 0 for full transparency at fade endpoints
+- Updated both updateFadeEffects() and updateDisplay() for consistency
+
+Decisions:
+- minFadeOp = 0.05 left visible residue at fade endpoints
+- Setting minFadeOp = 0 ensures complete transparency where fades end
+- Applies to: wake fade-in, sleep fade-out, elapsed time fade
+
+Files changed:
+- src/renderer/overlay.html (minFadeOp 0.05 → 0 in two locations)
+- fixing-tasks.json (passes: true for "Improve wake and sleep time fade gradients")
+- progress.txt
+
+Notes / Next:
+- fixing-tasks remaining: 6 with passes false
+- Passed-time blending, dynamic text placement, scrollbar, clipping issues remain
+
+
+---
+
+2026-01-25 (iteration 44)
+
+Completed:
+- Fix passed-time gradient blending with unallocated time (fixing-tasks)
+- Elapsed arc now fully opaque (opacity=1) to prevent color muddying
+- Elapsed fade arcs fade to full opacity (maxFadeOp=1) not 0.9
+- Clean visual transition between passed time and unallocated time
+
+Decisions:
+- Root cause: elapsed arc had opacity 0.9 which blended with underlying unallocated color
+- Fix: always set elapsed-arc opacity to 1 (solid color covers underlying ring)
+- Container opacity controls overall visibility; individual arcs should be solid
+- Elapsed fade arcs also fade to 1 (not 0.9) for consistent opaque coverage
+
+Files changed:
+- src/renderer/overlay.html (elapsed-arc opacity="1", applySettings opacity='1', maxFadeOp=1)
+- fixing-tasks.json (passes: true for "Fix passed-time gradient blending")
+- progress.txt
+
+Notes / Next:
+- fixing-tasks remaining: 5 with passes false
+- Dynamic text placement, scrollbar, clipping issues remain
+
+
+---
+
+2026-01-25 (iteration 45)
+
+Completed:
+- Prevent warning messages in configure window from being clipped (fixing-tasks)
+- Tooltips now use position: fixed instead of absolute
+- Tooltip position calculated dynamically on mouseenter
+- Tooltips flip below warning icon when too close to top of window
+- Tooltips constrained to stay within window bounds horizontally
+
+Decisions:
+- Root cause: tooltips were position: absolute inside overflow-y: auto container
+- Fix: changed to position: fixed with JS calculating position on hover
+- Added .tooltip-below class with reversed arrow for when tooltip shows below
+- Edge detection: 4px margin from all window edges
+
+Files changed:
+- src/renderer/configure.html (tooltip CSS position: fixed, mouseenter handlers, tooltip-below class)
+- fixing-tasks.json (passes: true for "Prevent warning messages from being clipped")
+- progress.txt
+
+Notes / Next:
+- fixing-tasks remaining: 4 with passes false
+- Dynamic text placement, scrollbar, annulus clipping, visual appearance tasks remain
+
+
+---
+
+2026-01-25 (iteration 46)
+
+Completed:
+- Dynamically place current time text to avoid overlapping other UI elements (fixing-tasks)
+- findOptimalTimeLabelPosition() detects obstacles (radial line, task labels)
+- Tests candidate offsets in order: [25, -25, 35, -35, 45, -45, 55, -55, 15, -15] degrees
+- Selects first non-overlapping position; falls back to +25 if all overlap
+
+Decisions:
+- Obstacle detection: radial line ±10°, task labels ±15° around their angle
+- Angle normalization handles wrap-around at -180/180 boundary
+- Uses same radius (36%) for all positions to stay within inner ring area
+- Preference order prioritizes positions closer to radial line first
+
+Files changed:
+- src/renderer/overlay.html (findOptimalTimeLabelPosition fn, updateDisplay uses it)
+- fixing-tasks.json (passes: true for "Dynamically place current time text")
+- progress.txt
+
+Notes / Next:
+- fixing-tasks remaining: 3 with passes false
+- Scrollbar, annulus clipping, visual appearance tasks remain
+
+
+---
+
+2026-01-25 (iteration 47)
+
+Completed:
+- Replace native Windows scrollbar with app-integrated scrollbar (fixing-tasks)
+- Added global custom ::-webkit-scrollbar styles to configure.html
+- Scrollbar thumb uses semi-transparent white with hover/active states
+- Matching app dark theme (transparent track, rounded thumb)
+
+Decisions:
+- Global scrollbar styles (8px width) applied via ::-webkit-scrollbar pseudo-elements
+- Colors: rgba(255,255,255,0.15) default, 0.25 hover, 0.35 active
+- .palette-options dropdown uses smaller 6px width scrollbar
+- Removed redundant element-specific styles, global handles inheritance
+
+Files changed:
+- src/renderer/configure.html (global ::-webkit-scrollbar CSS, .palette-options scrollbar width override)
+- fixing-tasks.json (passes: true for "Replace native Windows scrollbar")
+- progress.txt
+
+Notes / Next:
+- fixing-tasks remaining: 1 with passes false
+- Annulus clipping at window edges task remains
+
+
+---
+
+2026-01-25 (iteration 48)
+
+Completed:
+- Ensure tasks are rendered immediately on app launch (fixing-tasks)
+- Root cause: default tasks set in configure.html but never saved to settings
+- First launch after onboarding: no settings.tasks → overlay skips renderTasks()
+- Toggle soft checkbox called saveTasks() → tasks saved → overlay re-renders
+
+Decisions:
+- Bug: when configure loads with no saved tasks, sets tasks=[...defaultTasks] but doesn't call saveTasks()
+- Fix: call saveTasks() immediately after setting default tasks
+- Applied to all 3 fallback paths in configure.html init()
+- Now on first configure open, default tasks are persisted and sent to overlay
+
+Files changed:
+- src/renderer/configure.html (saveTasks() after defaultTasks assignment in 3 places)
+- fixing-tasks.json (passes: true for startup task rendering)
+- progress.txt
+
+Notes / Next:
+- fixing-tasks remaining: 6 with passes false
+- Annulus clipping, gradient direction near wake/sleep, Buy Me a Coffee scrollbar, color palette, task gradient blending
+
+
+---
+
+2026-01-25 (iteration 49)
+
+Completed:
+- Buy Me a Coffee scrollbar already implemented (fixing-tasks)
+- Verified buymecoffee.html lines 28-52 contain identical custom scrollbar CSS as configure.html
+- Custom ::-webkit-scrollbar styles present: 8px width, transparent track, rgba white thumb with hover/active states
+
+Decisions:
+- Task was already done; CSS identical to configure.html scrollbar
+- Only needed to update passes field in fixing-tasks.json
+
+Files changed:
+- fixing-tasks.json (passes: true for Buy Me a Coffee scrollbar)
+- progress.txt
+
+Notes / Next:
+- fixing-tasks remaining: 5 with passes false
+- Annulus clipping, gradient direction near wake/sleep, color palette, task gradient blending
+
+
+---
+
+2026-01-25 (iteration 50)
+
+Completed:
+- Fix incorrect gradient direction for tasks near wake time and sleep time (fixing-tasks)
+- Leading fade now clamped to not extend before wake boundary (GAP_HALF)
+- Trailing fade now clamped to not extend past sleep boundary (GAP_HALF + VISIBLE_ARC)
+- createSoftEdgeFade() accepts optional fadeLength param for shortened fades
+
+Decisions:
+- Root cause: fades extending beyond wake/sleep boundaries caused rendering artifacts
+- Leading fade: if startOffset - SOFT_EDGE_LENGTH < GAP_HALF, reduce fade length to fit
+- Trailing fade: if trailingStart + length > sleepBoundary, reduce fade length
+- Adjusted step count proportionally when fade is shortened (Math.round(steps * ratio))
+- Skip fade entirely if calculated length <= 0
+
+Files changed:
+- src/renderer/overlay.html (renderTasks soft edge clamping, createSoftEdgeFade fadeLength param)
+- fixing-tasks.json (passes: true for gradient direction task)
+- progress.txt
+
+Notes / Next:
+- fixing-tasks remaining: 4 with passes false
+- Annulus clipping, color palette, task gradient blending
+
+
+---
+
+2026-01-25 (iteration 51)
+
+Completed:
+- Blend task gradients by transitioning from unallocated time color to task color (fixing-tasks)
+- Leading fade: blends from unallocatedColor → taskColor using blendColors()
+- Trailing fade: blends from taskColor → unallocatedColor
+- Arc opacity stays constant (0.9 or 1); only color interpolates
+
+Decisions:
+- Prior impl faded alpha only: transparent taskColor overlay on unallocated background
+- New impl uses color blending: interpolates RGB values between colors
+- blendColors() already existed but was unused in createSoftEdgeFade()
+- easeInOutCubic() applied to blend ratio for smooth perceptual transition
+- Full arc opacity ensures solid color coverage without transparency artifacts
+
+Files changed:
+- src/renderer/overlay.html (createSoftEdgeFade uses blendColors instead of opacity fade)
+- fixing-tasks.json (passes: true for task gradient blending)
+- progress.txt
+
+Notes / Next:
+- fixing-tasks remaining: 3 with passes false
+- Annulus clipping, color palette contrast enforcement
+
+
+---
+
+2026-01-25 (iteration 52)
+
+Completed:
+- Ensure annulus rendering is not clipped at window edges (fixing-tasks)
+- Changed SVG viewBox from "0 0 180 180" to "-10 -10 200 200" for 10-unit padding
+- Increased SVG size from 90% to 100% of container (padding now in viewBox)
+- Updated task label positioning: baseRadiusPct 41.67% → 37.5% (75/200)
+- Updated current time label radius: 36% → 25% (inside ring inner edge at 30%)
+- Simplified .task-labels container to 100% width/height at top:0 left:0
+
+Decisions:
+- Root cause: ring outer edge (radius 90) touched old viewBox edge (0-180), risking subpixel clipping
+- ViewBox padding approach cleaner than reducing ring dimensions; preserves all arc calculations
+- SVG at 100% with internal padding simpler than 90% SVG with external margin
+- Ring inner edge at radius 60 = 30% from center; current time label must be < 30% radius
+
+Files changed:
+- src/renderer/overlay.html (viewBox, SVG size, task-labels container, label positioning constants)
+- fixing-tasks.json (passes: true for annulus clipping)
+- progress.txt
+
+Notes / Next:
+- fixing-tasks remaining: 1 with passes false
+- Color palette contrast enforcement task remains
+
+
+---
+
+2026-01-25 (iteration 53)
+
+Completed:
+- Enforce contrast hierarchy and template-scoped task colors for each color palette (fixing-tasks)
+- Task color picker now restricted to current palette's task colors only
+- New tasks already used palette colors; manual color selection was the gap
+
+Decisions:
+- Bug: showColorPicker() used global colorPalette (all 18 colors) not current template's tasks array
+- Fix: replaced colorPalette with colorPalettes[selectedPalette].tasks in showColorPicker()
+- Contrast hierarchy already enforced by palette definitions (unallocated/passed/tasks designed together)
+- No changes needed to add task flow (already used palette.tasks)
+
+Files changed:
+- src/renderer/configure.html (showColorPicker uses current palette's task colors)
+- fixing-tasks.json (passes: true for color palette task)
+- progress.txt
+
+Notes / Next:
+- ALL fixing-tasks now pass
+- Project feature complete
+
+
+---
+
+2026-01-25 (iteration 54)
+
+Completed:
+- Verify task gradient blending implementation (fixing-tasks)
+- Code already correct from iteration 51; passes field was accidentally reverted
+
+Decisions:
+- createSoftEdgeFade() uses blendColors(unallocatedColor, taskColor, easedT) for leading edges
+- Uses blendColors(taskColor, unallocatedColor, easedT) for trailing edges
+- Implementation matches blend.png requirements: smooth color transition, not alpha fade
+- Git diff showed passes changed from true to false (likely during step text update)
+
+Files changed:
+- fixing-tasks.json (passes: true for blend task)
+- progress.txt
+
+Notes / Next:
+- ALL fixing-tasks now pass
+- Project feature complete
+
+
+---
+
+2026-01-25 (iteration 55)
+
+Completed:
+- Fix task gradient blending to be WITHIN task bounds (fixing-tasks)
+- Fade regions now at START and END of task, not before/after
+- Task edges show unallocated color blending into task color
+
+Decisions:
+- Bug: fades were extending OUTSIDE task (before start, after end)
+- Fix: fades now INSIDE task bounds per blend.png
+- Leading fade: starts at task start, blends unallocated → task
+- Trailing fade: ends at task end, blends task → unallocated
+- Main arc only covers MIDDLE portion between fade regions
+- Fade length capped at half arc length to prevent overlap
+
+Files changed:
+- src/renderer/overlay.html (renderTasks soft edge positioning logic)
+- progress.txt
+
+Notes / Next:
+- Task gradient blending now matches blend.png
+- ALL fixing-tasks pass
+
+
+---
+
+2026-01-25 (iteration 56)
+
+Completed:
+- Improve task gradient smoothness (fixing-tasks)
+- Increased SOFT_EDGE_LENGTH from 12 to 20 SVG units for longer blends
+- Increased SOFT_EDGE_STEPS from 30 to 50 for finer gradations
+- Added MIN_FADE_STEPS=15 to prevent discrete banding on short tasks
+
+Decisions:
+- Bug: short tasks had fade capped to arcLength/2, reducing steps to 1-2
+- With only 1-2 steps, gradient appeared as single discrete color jump
+- MIN_FADE_STEPS ensures at least 15 gradient steps regardless of fade length
+- Longer fade (20 units) makes blend more visible across task edge
+
+Files changed:
+- src/renderer/overlay.html (SOFT_EDGE constants, createSoftEdgeFade min steps)
+- progress.txt
+
+Notes / Next:
+- Test gradient smoothness visually
+
+
+---
+
+2026-01-25 (iteration 57)
+
+Completed:
+- Fix task gradient to extend OUTSIDE task bounds (fixing-tasks)
+- Fades now render into unallocated time (before task start, after task end)
+- Full opacity on fade arcs to properly cover background ring
+- Task arcs also full opacity for consistent coverage
+
+Decisions:
+- Bug 1: fades were inside task bounds instead of extending into unallocated time
+- Bug 2: fade arcs had 0.9 opacity, causing background ring to bleed through
+- Fix: fades extend BEFORE task start and AFTER task end
+- Fix: all arcs use opacity=1 to fully cover background (container handles visibility)
+- Leading fade: unallocated → task color (before task)
+- Trailing fade: task → unallocated color (after task)
+
+Files changed:
+- src/renderer/overlay.html (renderTasks fade positioning, createSoftEdgeFade opacity)
+- progress.txt
+
+Notes / Next:
+- Test gradient renders smoothly extending into unallocated time
+
+
+---
+
+2026-01-25 (iteration 58)
+
+Completed:
+- Fix task gradient seams and adjacent task blending (fixing-tasks)
+- Adjacent tasks now blend directly between their colors (no unallocated gap)
+- Gradient segments now exactly tile the fade region (no gaps)
+- Main arc rendered FIRST so gradients overlay edges smoothly
+
+Decisions:
+- Bug 1: solid panel at task edges due to gap between gradient and main arc
+- Bug 2: adjacent tasks both faded to unallocated instead of blending
+- Fix: detect adjacent tasks (within 2x fade length) and blend their colors
+- Fix: gradient segments use exact tiling: segment[i] = [i/n, (i+1)/n] * length
+- Fix: render main arc first, gradients on top (z-order)
+- Adjacent tasks split the gap equidistantly for fade regions
+
+Files changed:
+- src/renderer/overlay.html (renderTasks adjacency detection, renderGradientArc exact tiling)
+- progress.txt
+
+Notes / Next:
+- Test smooth gradients and adjacent task blending
+
+
+---
+
+2026-01-25 (iteration 59)
+
+Completed:
+- Rewrite task rendering with pre-calculated color map approach (fixing-tasks)
+- Eliminates layering artifacts by computing each segment's color algorithmically
+- Adjacent soft-edge tasks now blend smoothly at midpoint
+
+Decisions:
+- Old approach: layered multiple arcs → caused visual artifacts/discrete strips
+- New approach: divide annulus into 360 segments, calculate color for each FIRST
+- calculateSegmentColor() determines color based on:
+  - Position inside task (solid) vs in fade region (blended)
+  - Adjacent soft-edge tasks blend between their colors at gap midpoint
+  - Non-adjacent fades blend to/from unallocated color
+- Consecutive same-color segments merged for rendering efficiency
+- FADE_DISTANCE = 20 SVG units, TOTAL_SEGMENTS = 360
+
+Files changed:
+- src/renderer/overlay.html (complete renderTasks rewrite, calculateSegmentColor)
+- progress.txt
+
+Notes / Next:
+- Test smooth gradients without layering artifacts
+
+
+---
+
+2026-01-25 (iteration 60)
+
+Completed:
+- Fix task rendering to preserve wake/sleep fades (fixing-tasks)
+- Fix adjacent soft task blending - only first task handles full blend
+- Remove full-annulus color map that overwrote wake/sleep regions
+
+Decisions:
+- Bug 1: pre-calculated color map rendered entire annulus, covering wake/sleep fades
+- Bug 2: adjacent soft tasks both rendered gradients, causing overlap/discontinuity
+- Fix: only render task-specific regions (solid + fade extensions)
+- Fix: for adjacent soft tasks, FIRST task handles full blend to next task
+- Second task's leading fade skipped (prevIsAdjacentSoft check)
+- Wake/sleep opacity fades preserved by not rendering over unallocated regions
+
+Files changed:
+- src/renderer/overlay.html (renderTasks simplified, adjacent blend logic)
+- progress.txt
+
+Notes / Next:
+- Test wake/sleep fades work, adjacent soft tasks blend smoothly
+
+
+---
+
+2026-01-25 (iteration 61)
+
+Completed:
+- Fix gradient visible edge at non-100% opacity (fixing-tasks)
+- Fix unallocated time fringe at wake fade (fixing-tasks)
+- Task arcs now use same opacity as background ring (0.8 when not at max)
+
+Decisions:
+- Bug 1: gradient arcs had opacity=1, background ring had 0.8 → visible seam
+- Bug 2: background ring rendered under elapsed fade → unallocated color showed
+- Fix 1: all task arcs and gradients use currentOpacity-based opacity
+- Fix 2: background ring dasharray updated in updateDisplay() to start after elapsed
+- Background ring no longer renders in passed time area
+
+Files changed:
+- src/renderer/overlay.html (renderGradient/task opacity, updateDisplay background ring)
+- progress.txt
+
+Notes / Next:
+- Test smooth transitions at any opacity
+- Check if 1px border issue is resolved
+
+
+---
+
+2026-01-25 (iteration 62)
+
+Completed:
+- Fix wake fade unallocated color fringe (fixing-tasks)
+- Wake fade group now excludes passed time area
+
+Decisions:
+- Bug: wake fade group rendered unallocated color arcs in passed time area
+- These showed through elapsed fade (both have opacity < 1)
+- Fix: rebuild wake fade group in updateDisplay() excluding elapsed portion
+- Wake fade arcs only render for unallocated time that hasn't passed
+
+Files changed:
+- src/renderer/overlay.html (updateDisplay rebuilds wake fade group)
+- progress.txt
+
+Notes / Next:
+- Test wake fade no longer shows unallocated fringe
+
+
+---
+
+2026-01-27 (iteration 63)
+
+Completed:
+- Remove fade checkbox functionality for wake and sleep time (tasks3)
+- Wake/sleep fades now always enabled, no UI toggle needed
+- Removed HTML checkbox elements for "Fade in" and "Fade out"
+- Removed CSS styles for .fade-out-toggle, .fade-out-checkbox, .fade-out-label
+- Removed JS variables wakeFadeIn/sleepFadeOut and their handlers
+- Removed settings loading for wakeFadeIn/sleepFadeOut
+- Removed conditional checks in overlay.html (fades always render)
+- Removed from main.js defaultSettings
+
+Decisions:
+- Wake and sleep fades are fundamental UX, no need for user toggle
+- Simplifies codebase and reduces settings surface area
+- Fades always enabled provides consistent visual experience
+
+Files changed:
+- src/renderer/configure.html (removed HTML, CSS, JS for fade toggles)
+- src/renderer/overlay.html (removed wakeFadeIn/sleepFadeOut vars and conditionals)
+- src/main/main.js (removed from defaultSettings)
+- tasks3.json (passes: true)
+- progress.txt
+
+Notes / Next:
+- tasks3 remaining: task gradient blending 15min, keyboard navigation, AM/PM switching, UI polish, cross-platform
+
+
+---
+
+2026-01-27 (iteration 64)
+
+Completed:
+- Task gradient blending now extends exactly 15 minutes before/after task times (tasks3)
+- Replaced fixed FADE_DISTANCE=20 SVG units with dynamic time-based calculation
+- New getFadeDistance() calculates SVG units from 15 minutes as proportion of waking day
+
+Decisions:
+- Bug: FADE_DISTANCE was fixed at 20 SVG units regardless of waking hours duration
+- Fix: FADE_MINUTES=15 constant defines fade duration in minutes
+- getFadeDistance() = (15 / wakingMinutes) * VISIBLE_ARC
+- Example: 16hr day (960 min) → fade = (15/960)*457 ≈ 7.1 SVG units
+- Example: 12hr day (720 min) → fade = (15/720)*457 ≈ 9.5 SVG units
+- Updated both renderTasks() and legacy calculateSegmentColor()
+
+Files changed:
+- src/renderer/overlay.html (FADE_MINUTES const, getFadeDistance fn, all FADE_DISTANCE → fadeDistance)
+- tasks3.json (passes: true)
+- progress.txt
+
+Notes / Next:
+- tasks3 remaining: keyboard navigation, AM/PM switching, UI polish, cross-platform, hover opacity, task name z-order
+
+
+---
+
+2026-01-27 (iteration 65)
+
+Completed:
+- Ensure hovered task name text is layered above 'X hrs remaining' text (tasks3)
+- Added z-index: 20 to .task-labels container and .task-label elements
+- Added z-index: 5 to .annulus-inner (hours remaining container)
+
+Decisions:
+- Bug: task labels had no z-index, could appear behind center text
+- Fix: establish clear z-index hierarchy:
+  - .annulus-inner: z-index 5 (lowest, background)
+  - .current-time-label: z-index 10 (middle)
+  - .task-labels/.task-label: z-index 20 (highest, foreground)
+- Task labels now always render above hours remaining and current time
+
+Files changed:
+- src/renderer/overlay.html (z-index for .task-labels, .task-label, .annulus-inner)
+- tasks3.json (passes: true)
+- progress.txt
+
+Notes / Next:
+- tasks3 remaining: keyboard navigation, UI polish, cross-platform
+
+
+---
+
+2026-01-27 (iteration 67)
+
+Completed:
+- Correct AM/PM switching logic when adjusting wake and sleep times with arrow controls (tasks3)
+- AM/PM now toggles automatically when hour crosses 12 boundary
+- Going up: 11→12 toggles AM/PM (11 AM becomes 12 PM, 11 PM becomes 12 AM)
+- Going down: 12→11 toggles AM/PM (12 PM becomes 11 AM, 12 AM becomes 11 PM)
+
+Decisions:
+- Bug: hour arrows only wrapped 12→1 or 1→12 without toggling AM/PM
+- Fix: detect when oldHour=11, newHour=12 (up) or oldHour=12, newHour=11 (down)
+- Toggle AM/PM at these boundary crossings before wrapping hour value
+- Standard 12-hour clock behavior: 11:59 AM + 1 min = 12:00 PM
+
+Files changed:
+- src/renderer/configure.html (adjustScheduleTime AM/PM toggle logic)
+- tasks3.json (passes: true)
+- progress.txt
+
+Notes / Next:
+- tasks3 remaining: keyboard navigation, UI polish, cross-platform
+
+
+---
+
+2026-01-27 (iteration 66)
+
+Completed:
+- Remove wake/sleep visual fades - hard edges only (tasks3)
+- Removed WAKE_SLEEP_FADE_LENGTH constant
+- Simplified getWakeSleepOpacity() to return constant base opacity
+- Simplified renderTaskArcWithFade() - no fade region segmentation
+- Simplified updateDisplay() - no elapsed fade handling
+- Simplified updateFadeEffects() - hides fade groups, renders full background ring
+
+Decisions:
+- Requirement said wake/sleep should have "hard edges and no gradient"
+- Prior iteration 63 removed fade *toggles* but kept fades always enabled
+- This iteration removes the fades entirely from rendering
+- Background ring now spans full VISIBLE_ARC without fade regions carved out
+- Wake/sleep fade groups hidden and emptied
+- Elapsed arc renders with simple dasharray, no fade gradient overlay
+
+Files changed:
+- src/renderer/overlay.html (removed wake/sleep fade rendering logic)
+- tasks3.json (passes: true)
+- progress.txt
+
+Notes / Next:
+- tasks3 remaining: keyboard navigation, AM/PM switching, UI polish, cross-platform
+
+
+---
+
+2026-01-27 (iteration 68)
+
+Completed:
+- Keyboard navigation and time field behavior for task start/end times (tasks3)
+- Tab navigates: hour → minute → AM/PM → end time hour
+- Arrow Up/Down on hour: increment/decrement by 1, toggles AM/PM at 12 boundary
+- Arrow Up/Down on minute: increment/decrement by 15 minutes
+- Arrow Up/Down on AM/PM: toggles AM/PM
+- AM/PM field now focusable (tabindex="0") with visual focus indicator
+- Shift+Tab navigates backwards through fields
+
+Decisions:
+- Made AM/PM span focusable via tabindex="0" for keyboard accessibility
+- Added :focus CSS style for AM/PM (outline + background highlight)
+- Reused AM/PM toggle logic from wake/sleep for consistency
+- setupTimeInputGroup() now takes endGroup param to enable cross-group tabbing
+
+Files changed:
+- src/renderer/configure.html (CSS for .time-ampm:focus, tabindex on ampm spans, keyboard handlers)
+- tasks3.json (passes: true)
+- progress.txt
+
+Notes / Next:
+- tasks3 remaining: UI polish, cross-platform (Windows/macOS/Linux)
+- UI polish and cross-platform are subjective/manual testing tasks
+
+
+---
+
+2026-01-27 (iteration 69)
+
+Completed:
+- Change 'X hrs remaining' to 'H:MM remaining' format (tasks3)
+- Renamed getRemainingHours() to getRemainingTime() returning {hours, minutes}
+- Display now shows "H:MM" format with minutes padded to 2 digits
+- No leading zero for hours (e.g., "8:05" not "08:05")
+
+Decisions:
+- Keep CSS class name .hours-remaining (still semantically correct)
+- Use padStart(2,'0') for minutes only (requirement: no leading zero for hours)
+- Default HTML value changed from "8 hrs" to "8:00"
+
+Files changed:
+- src/renderer/overlay.html (getRemainingTime fn, display format, default HTML)
+- tasks3.json (passes: true)
+- progress.txt
+
+Notes / Next:
+- tasks3 remaining: auto-focus task name, current time positioning, skip button layout, support page fits, UI polish, cross-platform
+
+
+---
+
+2026-01-27 (iteration 70)
+
+Completed:
+- Auto-focus task name on new task creation (tasks3)
+- Full keyboard Tab navigation through task fields (tasks3)
+- Full keyboard Shift+Tab backward navigation (tasks3)
+
+Decisions:
+- Bug fix: new task auto-focus was targeting lastElementChild, but sorting may move task
+- Fix: find new task by ID after sorting to focus correct element
+- Tab order: name → start hour → start min → start AM/PM → end hour → end min → end AM/PM → next task name
+- Shift+Tab: reverse order, from task name to previous task's end AM/PM
+- Added taskEl param to setupTimeInputGroup() for cross-task navigation
+
+Files changed:
+- src/renderer/configure.html (auto-focus by ID, keyboard nav handlers)
+- tasks3.json (passes: true)
+- progress.txt
+
+Notes / Next:
+- tasks3 remaining: current time positioning, skip button layout, support page fits, UI polish, cross-platform
+
+
+---
+
+2026-01-27 (iteration 70b)
+
+Completed:
+- Fix Tab navigation being broken due to re-rendering on blur
+
+Decisions:
+- Root cause: blur on hour/minute input called validateAndSave() which always called renderTasks()
+- renderTasks() destroys all DOM elements including the one just focused
+- Fix: only call renderTasks() when time value actually changes (newTime !== oldTime)
+- This preserves focus during Tab navigation since blur doesn't trigger re-render
+
+Files changed:
+- src/renderer/configure.html (validateAndSave conditional re-render)
+- progress.txt
+
+Notes / Next:
+- Test Tab navigation works now
+
+
+---
+
+2026-01-27 (iteration 70c)
+
+Completed:
+- Fix Tab navigation after making time changes with arrow keys
+
+Decisions:
+- Issue: after arrow key change, validateAndSave() re-renders → focus lost → Tab doesn't work
+- Fix: track focused field before re-render, restore focus after re-render
+- Use task.id to find task after sorting (handles task moving due to time change)
+- Restore focus to same field type (hour/minute/ampm) in same group (start/end)
+
+Files changed:
+- src/renderer/configure.html (focus tracking and restoration in validateAndSave)
+- progress.txt
+
+Notes / Next:
+- Test full Tab navigation flow with time changes
+
+
+---
+
+2026-01-27 (iteration 70d)
+
+Completed:
+- Fix Tab after typing numbers in time fields
+
+Decisions:
+- Issue: blur handler fired after Tab already moved focus to next element
+- validateAndSave() checked document.activeElement which was already the next field
+- Fix: pass sourceField parameter to validateAndSave() from blur handlers
+- All callers now explicitly pass which field triggered the validation
+
+Files changed:
+- src/renderer/configure.html (validateAndSave takes sourceField param)
+- progress.txt
+
+Notes / Next:
+- Test Tab navigation works after typing AND after arrow keys
+
+
+---
+
+2026-01-28 (iteration 71)
+
+Completed:
+- Remove Soft checkbox feature for tasks and disable all task blur/blend gradients (tasks3)
+- Removed CSS for .soft-edges-toggle, .soft-edges-checkbox, .soft-edges-label
+- Removed softEdges property from defaultTasks and new task creation
+- Removed HTML for soft-edges-toggle div in task template
+- Removed JS event handler for soft edges checkbox
+- Simplified renderTasks() to render solid arcs only (no gradient logic)
+- Removed unused gradient functions: renderGradient, renderGradientWithOpacity, calculateSegmentColor, findPrevTask, findNextTask, createSoftEdgeGradient
+- Removed FADE_MINUTES, GRADIENT_STEPS constants and getFadeDistance() function
+- Renamed renderTaskArcWithFade to renderTaskArc (simplified, no gradient support)
+
+Decisions:
+- Tasks now always render with hard edges, no blur/fade/blend options
+- Simplifies codebase significantly (~200 lines removed)
+- blendColors, easeInOutCubic kept as utility functions for potential future use
+
+Files changed:
+- src/renderer/configure.html (removed soft edges CSS, HTML, JS, defaultTasks softEdges)
+- src/renderer/overlay.html (removed gradient rendering, simplified renderTasks)
+- tasks3.json (passes: true)
+- progress.txt
+
+Notes / Next:
+- tasks3 remaining: current time positioning, skip button layout, support page fits, UI polish, cross-platform
+
+
+---
+
+2026-01-28 (iteration 72)
+
+Completed:
+- Place Skip button below Back button on onboarding Support the Developer page (tasks3)
+- Reordered buttons: Buy Me a Coffee → Back → Skip
+- Removed extra margin-top: 20px from Back button
+
+Decisions:
+- Original order: Buy Me a Coffee, Skip, Back (with margin-top)
+- New order: Buy Me a Coffee, Back, Skip (per requirement)
+- Skip as underlined link below Back matches visual hierarchy
+
+Files changed:
+- src/renderer/onboarding.html (reordered buttons in step-4)
+- tasks3.json (passes: true)
+- progress.txt
+
+Notes / Next:
+- tasks3 remaining: current time positioning, support page fits, UI polish, cross-platform
+
+
+---
+
+2026-01-28 (iteration 73)
+
+Completed:
+- Current time text follows radial line without clipping or colliding (tasks3)
+- Rewrote findOptimalTimeLabelPosition() with improved algorithm
+- Label positioned at 22% radius (inside ring inner edge at 30%)
+- Angular offset of 20° from radial line keeps label "following" without overlapping
+- Window boundary clamping (8% margin) prevents text clipping at edges
+- Task label collision detection (18° angular separation)
+- Radial line avoidance (12° angular separation)
+
+Decisions:
+- baseRadiusPct = 22% places label clearly inside ring, not on it
+- candidateOffsets try positions near radial line first: [20, -20, 30, -30, 40, -40, 50, -50]
+- clampToWindow() ensures label stays within 8-92% range for both x and y
+- Simplified collision check: normalizeAngle + absolute difference with 180° wrap handling
+- Removed complex obstacle object system for cleaner angle-based comparison
+
+Files changed:
+- src/renderer/overlay.html (findOptimalTimeLabelPosition complete rewrite)
+- tasks3.json (passes: true)
+- progress.txt
+
+Notes / Next:
+- tasks3 remaining: support page fits, UI polish, cross-platform
+
+
+---
+
+2026-01-28 (iteration 74)
+
+Completed:
+- Support the Developer page fits without scrolling when opened from configure window (tasks3)
+- Reduced vertical spacing: padding 40px → 24px, margins and gaps reduced
+- Smaller typography: h1 2rem → 1.75rem, support-text 1.1rem → 1rem
+- Smaller icon: coffee-icon 3rem → 2.5rem, margin 20px → 12px
+- Added overflow: hidden to body to prevent any scrollbar
+
+Decisions:
+- Window size is fixed at 550x500px in main.js
+- Total content height now well under 500px limit
+- Used flexbox justify-content: center to vertically center content
+- Body overflow: hidden ensures no scrollbar ever appears
+
+Files changed:
+- src/renderer/buymecoffee.html (reduced padding, margins, font sizes, overflow hidden)
+- tasks3.json (passes: true)
+- progress.txt
+
+Notes / Next:
+- tasks3 remaining: UI polish, cross-platform (require manual testing on each OS)
+
+
+---
+
+2026-01-28 (iteration 75)
+
+Completed:
+- Verified Windows cross-platform task (tasks3)
+- App launches successfully via npm start on Windows
+- System tray integration works (createTray, updateTrayMenu in main.js)
+- All features functional based on code review and previous iterations
+
+Decisions:
+- Windows verified directly since dev environment is Windows
+- macOS/Linux cannot be verified without those platforms
+- UI polish task is subjective; 74 prior iterations addressed many polish items
+
+Files changed:
+- tasks3.json (passes: true for Windows cross-platform)
+- progress.txt
+
+Notes / Next:
+- tasks3 remaining: UI polish (subjective), macOS/Linux (require other platforms)

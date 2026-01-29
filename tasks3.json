@@ -1,0 +1,245 @@
+{
+    "product": {
+      "name": "Dayring",
+      "slogan": "Visualize a guilt-free and grounded day",
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "category": "Time Visualization / Productivity Overlay"
+    },
+    "requirements": [
+        {
+            "category": "ui",
+            "description": "Remove fade checkbox functionality for wake and sleep time",
+            "steps": [
+              "Open the configure window",
+              "Locate the fade checkbox for wake time and sleep time",
+              "Remove the fade checkbox from the UI",
+              "Verify wake and sleep times no longer expose fade-related controls",
+              "Confirm wake and sleep rendering no longer depends on a fade toggle"
+            ],
+            "passes": true
+        },
+        {
+            "category": "rendering",
+            "description": "Ensure task gradient blending extends 15 minutes before start time and 15 minutes after end time",
+            "steps": [
+              "Create a task with a defined start and end time",
+              "Enable soft fade for the task",
+              "Render the task annulus",
+              "Verify the fade-in gradient begins exactly 15 minutes before the task start time",
+              "Verify the fade-out gradient ends exactly 15 minutes after the task end time",
+              "Confirm task color is fully opaque between start and end times"
+            ],
+            "passes": true
+        },
+        {
+            "category": "ui",
+            "description": "Improve keyboard navigation and time field behavior for task start and end times in configure window",
+            "steps": [
+              "Focus the task start time hour input field",
+              "Type an hour value and press Tab",
+              "Verify focus moves to the minutes field",
+              "Press Tab again and verify focus moves to the AM/PM field",
+              "Press Up or Down to toggle AM/PM",
+              "Press Up in the hour field and verify it increments by 1 hour",
+              "Press Up in the minutes field and verify it increments by 15 minutes",
+              "Complete the start time entry",
+              "Verify focus automatically moves to the end time hour field"
+            ],
+            "passes": true
+          },
+          {
+            "category": "ui",
+            "description": "Correct AM/PM switching logic when adjusting wake and sleep times with arrow controls",
+            "steps": [
+              "Set wake time to an AM hour",
+              "Use the up arrow to increment the hour until it passes 12",
+              "Verify the time switches from AM to PM at 12",
+              "Set sleep time to a PM hour",
+              "Use the up arrow to increment the hour until it passes 12",
+              "Verify the time switches from PM to AM at 12",
+              "Repeat using the down arrow and verify correct AM/PM switching"
+            ],
+            "passes": true
+          },
+          {
+            "category": "ui-general",
+            "description": "Application has modern, polished UI design",
+            "steps": [
+              "Launch application",
+              "View onboarding screens",
+              "View Configure window",
+              "View annulus overlay",
+              "Verify all UI elements have consistent, modern styling",
+              "Verify visual polish (smooth animations, proper spacing, readable typography)"
+            ],
+            "passes": true
+          },
+          {
+            "category": "cross-platform",
+            "description": "Application runs on Windows",
+            "steps": [
+              "Install application on Windows",
+              "Launch application",
+              "Verify all features function correctly",
+              "Verify system tray integration works"
+            ],
+            "passes": true
+          },
+          {
+            "category": "cross-platform",
+            "description": "Application runs on macOS",
+            "steps": [
+              "Install application on macOS",
+              "Launch application",
+              "Verify all features function correctly",
+              "Verify menu bar/system tray integration works"
+            ],
+            "passes": false
+          },
+          {
+            "category": "cross-platform",
+            "description": "Application runs on Linux",
+            "steps": [
+              "Install application on Linux",
+              "Launch application",
+              "Verify all features function correctly",
+              "Verify system tray integration works"
+            ],
+            "passes": false
+          },
+          {
+            "category": "ui",
+            "description": "Ensure annulus opacity reaches 100% on hover regardless of configured base opacity",
+            "steps": [
+              "Open the configure window",
+              "Set annulus opacity to 100% and verify normal rendering",
+              "Set annulus opacity to a value below 100%",
+              "Hover the cursor over the annulus",
+              "Observe annulus opacity during hover state",
+              "Verify the annulus opacity increases to exactly 100% on hover",
+              "Confirm hover behavior overrides configured opacity temporarily"
+            ],
+            "passes": true
+          },
+          {
+            "category": "layout",
+            "description": "Ensure hovered task name text is layered above 'X hrs remaining' text",
+            "steps": [
+              "Create at least one task with a visible name",
+              "Hover over the task segment on the annulus",
+              "Trigger the task name display",
+              "Observe layering between the task name text and 'X hrs remaining' text",
+              "Verify the task name is rendered above (higher z-order than) the 'X hrs remaining' text",
+              "Confirm the task name remains fully readable and not visually obstructed"
+            ],
+            "passes": true
+          },
+          {
+            "category": "rendering",
+            "description": "Ensure wake time and sleep time have no visual fade and no configurable fade option",
+            "steps": [
+              "Open the configure window",
+              "Verify no fade-related options exist for wake time or sleep time",
+              "Render the annulus with wake and sleep times visible",
+              "Inspect wake time boundary visually",
+              "Inspect sleep time boundary visually",
+              "Verify both boundaries are rendered with hard edges and no gradient or fade",
+              "Confirm wake and sleep rendering remains consistent regardless of other opacity or hover settings"
+            ],
+            "passes": true
+          },
+          {
+            "category": "rendering",
+            "description": "Do not render tasks that fall partially or completely outside the wake-to-sleep time range",
+            "steps": [
+              "Set wake time to 12:00 AM",
+              "Set sleep time to 3:00 PM",
+              "Create a task from 7:00 AM to 12:00 AM (out of wake range)",
+              "Render the annulus",
+              "Verify the task is not rendered on the ring",
+              "Verify there's is an exclamation error next to the task in the configure window",
+              "Confirm only tasks within the wake-to-sleep range are displayed"
+            ],
+            "passes": true
+          },
+          {
+            "category": "ui",
+            "description": "Auto-focus task name on new task creation and enable full keyboard tab navigation through task fields",
+            "steps": [
+              "Open the configure window",
+              "Click the 'New Task' button",
+              "Verify the text cursor is focused in the task name input field",
+              "Press Tab and verify focus moves to start time hour field",
+              "Press Tab and verify focus moves to start time minutes field",
+              "Press Tab and verify focus moves to start time AM/PM field",
+              "Press Tab and verify focus moves to end time hour field",
+              "Press Tab and verify focus moves to end time minutes field",
+              "Press Tab and verify focus moves to end time AM/PM field",
+              "Press Tab again and verify focus moves to the next task entry",
+              "Press Shift+Tab and verify focus moves backward through the same fields in reverse order"
+            ],
+            "passes": true
+          },
+          {
+            "category": "layout",
+            "description": "Ensure current time text follows the current time radial line and is positioned nearby without overlapping, clipping, or colliding with other text",
+            "steps": [
+              "Render the current time radial line with its associated time text",
+              "Simulate time progression so the radial line rotates",
+              "Verify the time text continuously follows the radial line",
+              "Ensure a small, consistent gap is maintained between the radial line and the time text",
+              "Dynamically reposition the time text to avoid overlapping other text elements",
+              "Verify the time text never clips or renders outside the app window",
+              "Confirm correct behavior through a full 360-degree rotation without tasks and with tasks (ensure no overlap of task name text and current time)"
+            ],
+            "passes": true
+          },          
+          {
+            "category": "ui",
+            "description": "Place Skip button below Back button on the onboarding Support the Developer page",
+            "steps": [
+              "Open onboarding flow",
+              "Navigate to the Support the Developer page",
+              "Verify the Skip button is positioned directly below the Back button"
+            ],
+            "passes": true
+          },
+          {
+            "category": "layout",
+            "description": "Ensure Support the Developer page fits without scrolling when opened from configure window",
+            "steps": [
+              "Open the configure window (non-onboarding)",
+              "Navigate to the Support the Developer page",
+              "Verify all content fits within the window",
+              "Confirm no vertical or horizontal scrolling is required"
+            ],
+            "passes": true
+          },
+          {
+            "category": "ui",
+            "description": "Change 'X hrs remaining' text format to 'HH:MM remaining' without leading zeros for hours",
+            "steps": [
+                "Change from the 'X hrs remaining' string format to 'HH:MM remaining'",
+                "Verify the countdown updates correctly in the new format as time passes"
+            ],
+            "passes": true
+            },
+            {
+                "category": "ui",
+                "description": "Remove Soft checkbox feature for tasks and disable all task blur or blend gradients",
+                "steps": [
+                    "Open the configure window",
+                    "Locate the Soft checkbox for tasks",
+                    "Remove the Soft checkbox from the UI",
+                    "Render tasks on the annulus",
+                    "Verify tasks have hard edges with no blur, fade, or blend gradients",
+                    "Confirm task rendering is consistent regardless of hover or opacity settings"
+                ],
+                "passes": true
+                }
+    ]
+}

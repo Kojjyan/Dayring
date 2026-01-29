@@ -1,0 +1,365 @@
+Product Specification
+
+App Name: DayRing
+Slogan: Visualize a guilt-free and grounded day
+Platform: Desktop (Windows/macOS/Linux)
+Category: Time Visualization / Productivity Overlay
+
+1. Application Behavior & Startup
+
+The application is a desktop app with a modern, polished UI.
+
+On system startup:
+
+The app launches minimized to the system tray by default.
+
+No windows are shown on startup.
+
+The app runs persistently in the background unless explicitly disabled or exited by the user.
+
+2. Onboarding Flow
+
+The onboarding experience is presented as a single-question-at-a-time flow, with Step 0 as a welcome screen. Navigation:
+
+All steps (1–4) include a “Back” button to return to the previous step.
+
+Step 0 has only a “Continue →” button.
+
+Step 0 — Welcome
+
+Prompt:
+
+“Welcome to DayRing”
+
+UI:
+
+Centered welcome text
+
+Primary action: Continue →
+
+Step 1 — Wake Time
+
+Prompt:
+
+“A consistent sleep schedule maximizes your productivity. When will you wake up every day?”
+
+Input UI:
+
+Hour selector (scroll up/down)
+
+Minute selector (scroll up/down)
+
+AM / PM selector (scroll up/down)
+
+Buttons:
+
+Back → returns to Step 0
+
+Continue
+
+Step 2 — Sleep Time
+
+Prompt:
+
+“When do you sleep?”
+
+Input UI:
+
+Hour selector
+
+Minute selector
+
+AM / PM selector
+
+Buttons:
+
+Back → returns to Step 1
+
+Continue
+
+Step 3 — Time Awareness
+
+Prompt:
+
+“You are awake X hours and Y minutes every day. Where did all these hours go?”
+
+Buttons:
+
+Back → returns to Step 2
+
+Continue
+
+Step 4 — Buy Me a Coffee Screen
+
+Content:
+
+Text:
+
+“Support Kojjyan, the developer of this productivity tool.”
+
+Buttons:
+
+Continue → opens the Buy Me a Coffee page in the default browser
+
+Skip → proceeds directly to the Configure window
+
+Buttons also include:
+
+Back → returns to Step 3
+
+Important Behavior Note:
+
+This screen does NOT appear on app startup.
+
+This screen appears only as a precursor to the Configure window when the Configure window is opened from the system tray.
+
+Every time the user opens the Configure window from the tray, this screen is shown first.
+
+3. Default Overlay (Annulus)
+
+After onboarding completes (or the Configure window is used), an annulus (ring) with a border fades into view.
+
+Position & Appearance
+
+Default position: Top-right corner of the screen
+
+The annulus represents the user’s daily waking hours only
+
+The annulus has:
+
+A visible border
+
+Smooth fade-in animation on first appearance
+
+Time Mapping
+
+The top of the annulus represents:
+
+The wake time
+
+The sleep time (same point, completing the cycle)
+
+A radial line intersects the annulus perpendicularly to indicate the current system time
+
+The portion of the annulus representing elapsed time is:
+
+Greyed out by default
+
+(Note: “top of the annulus” refers to the visual top position, not a literal clock-face 12 o’clock time.)
+
+4. System Tray Interaction
+Tray Icon Behavior
+
+The app lives in the system tray at all times when running.
+
+Right-Click Menu Options
+
+Enable / Disable (toggle)
+
+Configure Your Day
+
+Additional Access
+
+Double left-clicking the tray icon opens the Configure flow (Buy Me a Coffee screen → Configure window)
+
+5. Configure Window — Overview
+
+The Configure window is the central control panel for the app.
+
+Header Section
+
+Displays:
+
+App logo and/or app name
+
+Opacity slider for the annulus:
+
+Range: 0%–100%
+
+Default: 80%
+
+Hover behavior:
+
+When the cursor is near the annulus:
+
+Effective opacity becomes min(user_setting + 20%, 100%)
+
+Task labels fade in next to their corresponding annulus segments
+
+Annulus Size Adjustment
+
+Users can adjust the overall size (diameter) of the annulus.
+
+Important constraint:
+
+The annulus grows inwards as size increases to ensure it does not clip or extend off-screen.
+
+6. Annulus Center Display
+
+Center text shows:
+
+Large text: X hrs
+
+Small subtitle below: remaining
+
+Represents the remaining waking time in the day
+
+7. Task Editor
+Task List
+
+Each task entry includes:
+
+Task name
+
+Start time
+
+End time
+
+Color square:
+
+Clicking opens a color picker
+
+Soft edges checkbox
+
+Enables blending on the annulus
+
+Delete button:
+
+Only visible when the user hovers over the task
+
+Default Tasks (Editable)
+
+Breakfast: 8:30 – 9:00
+
+Lunch: 12:00 – 12:30
+
+Dinner: 6:00 – 6:30
+
+Task Creation
+
+A “+” button adds a new task
+
+After entering times and pressing Enter:
+
+The task is saved
+
+The list automatically reshuffles into chronological order
+
+Task Validation Indicators
+Out of Waking Hours
+
+Icon: Small red triangle with exclamation
+
+Position: Left of task name
+
+Meaning: Task will not appear on the annulus
+
+Overlapping Tasks
+
+Icon: Orange circle with exclamation
+
+Position: Left of task name
+
+Meaning: Task overlaps with another task
+
+Behavior Notes
+
+Both icons may appear simultaneously
+
+Icons:
+
+Do not shift task alignment
+
+Appear stacked horizontally to the left of the task
+
+Hovering an icon shows a small descriptive speech-bubble tooltip
+
+8. Color Customization
+Unallocated Time
+
+Color box below the task list
+
+Controls the color of annulus segments without assigned tasks
+
+Passed Time
+
+Color box below unallocated time
+
+Controls the color of elapsed time
+
+Default: Grey
+
+Color Palettes
+
+Dropdown selector for predefined color palettes
+
+Palettes should:
+
+Look modern
+
+Have good contrast when adjacent
+
+Defaults:
+
+Background and unallocated time colors are clearly distinct
+
+Task colors visually stand out
+
+9. Wake & Sleep Time Adjustments
+
+Users can modify:
+
+Wake time
+
+Sleep time
+
+For each:
+
+Checkbox to enable/disable annulus fade-out
+
+Default: Fade-out enabled
+
+10. Positional Settings (Expandable Section)
+Manual Placement
+
+While the Configure window is open:
+
+The user can click and drag the annulus to any position on the screen
+
+The Configure window includes instructional text explaining this behavior
+
+Screen Anchors
+
+Nine alignment presets:
+
+Top left
+
+Top center
+
+Top right
+
+Middle left
+
+Center
+
+Middle right
+
+Bottom left
+
+Bottom center
+
+Bottom right
+
+11. Annulus Rotation
+
+Numeric input for rotation angle:
+
+Range: 0–359 degrees
+
+Default: 0
+
+Wake/sleep point aligned to the top of the annulus
+
+Interaction:
+
+User can drag left/right on the input to adjust rotation smoothly

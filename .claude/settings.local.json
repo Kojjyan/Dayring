@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(npm start)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nSet up Electron project with system tray and basic annulus overlay\n\nInitialize the DayRing desktop application foundation with:\n- Electron project structure with main/renderer process separation\n- System tray integration with Enable/Disable toggle, Configure menu, and Exit\n- Basic annulus overlay window \\(transparent, always-on-top\\) in top-right corner\n- Placeholder configure window with opacity slider\n- Single instance enforcement to prevent duplicate app instances\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfix\\(ui\\): add custom scrollbar to onboarding and buy-me-coffee pages\n\nApply consistent scrollbar styling across all app windows.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nchore: update developer name and task configuration\n\n- Rename developer from Kevin to Kojjyan in prd.txt and main.js\n- Update Buy Me a Coffee URL to buymeacoffee.com/Kojjyan\n- Switch ralph scripts to use tasks3.json\n- Remove obsolete fixing-tasks.json\n- Add ralph scripts to .gitignore\n- Mark completed tasks as passing in tasks.json\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit:*)",
+      "Bash(cd:*)",
+      "Bash(npm run)",
+      "Bash(npm run build:win:*)"
+    ]
+  }
+}
