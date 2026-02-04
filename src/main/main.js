@@ -4,6 +4,11 @@ const fs = require('fs');
 const AutoLaunch = require('auto-launch');
 const { autoUpdater } = require('electron-updater');
 
+// Prevent app crash on update error (e.g. signature validation failure on macOS)
+autoUpdater.on('error', (error) => {
+  console.error('Auto-update error:', error);
+});
+
 let tray = null;
 let configureWindow = null;
 let overlayWindow = null;
