@@ -30,6 +30,13 @@
     "directories": {
       "output": "dist"
     },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Kojjyan",
+        "repo": "DayRing"
+      }
+    ],
     "files": [
       "src/**/*",
       "assets/**/*",
@@ -40,8 +47,7 @@
         "nsis",
         "portable"
       ],
-      "icon": "assets/favicon.ico",
-      "signAndEditExecutable": false
+      "icon": "assets/favicon.ico"
     },
     "mac": {
       "target": [
@@ -67,6 +73,7 @@
     "electron-builder": "^26.4.0"
   },
   "dependencies": {
-    "auto-launch": "^5.0.6"
+    "auto-launch": "^5.0.6",
+    "electron-updater": "^6.7.3"
   }
 }

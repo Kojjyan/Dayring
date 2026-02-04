@@ -2,6 +2,7 @@ const { app, BrowserWindow, Tray, Menu, nativeImage, ipcMain, shell } = require(
 const path = require('path');
 const fs = require('fs');
 const AutoLaunch = require('auto-launch');
+const { autoUpdater } = require('electron-updater');
 
 let tray = null;
 let configureWindow = null;
@@ -69,6 +70,16 @@ let settings = defaultSettings;
 // Sync auto-launch with settings
 async function syncAutoLaunch() {
   try {
+    // In development logic: prevent auto-launch registration and clean up existing invalid entries
+    if (!app.isPackaged) {
+      const isEnabled = await autoLauncher.isEnabled();
+      if (isEnabled) {
+        console.log('Development mode detected: Removing invalid auto-launch entry...');
+        await autoLauncher.disable();
+      }
+      return;
+    }
+
     const isEnabled = await autoLauncher.isEnabled();
     if (settings.autoStart && !isEnabled) {
       await autoLauncher.enable();
@@ -187,7 +198,8 @@ function createOnboardingWindow() {
       nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
-    }
+    },
+    icon: path.join(__dirname, '../../assets/favicon.ico')
   });
 
   onboardingWindow.loadFile(path.join(__dirname, '../renderer/onboarding.html'));
@@ -489,6 +501,11 @@ app.whenReady().then(async () => {
 
   // Sync auto-launch with settings
   await syncAutoLaunch();
+
+  // Check for updates
+  if (app.isPackaged) {
+    autoUpdater.checkForUpdatesAndNotify();
+  }
 
   createTray();
 
