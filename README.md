@@ -1,7 +1,6 @@
-# DayRing
+# Dayring
 
 **See your day at a glance. Stay grounded in time.**
-[Download it here.](https://github.com/Kojjyan/Dayring/releases)
 
 ## The Problem
 
@@ -27,9 +26,49 @@ A transparent ring overlay on your desktop that shows:
 - 🚀 Auto-start with your PC
 - 🖱️ Click-through — doesn't block your work
 
-## Download
+## How to Install?
+### What should I download?
 
-Get the latest release for Windows, macOS, or Linux from [Releases](https://github.com/Kojjyan/DayRing/releases).
+[Download **one file** based on your operating system. Most users only need **one installer**.](https://github.com/Kojjyan/Dayring/releases)
+
+#### 🪟 Windows
+
+* **Recommended:** `DayRing-Setup-x.x.x.exe`
+  → Standard Windows installer (auto-updates for v1.1.1+)
+
+* **Portable (no install):** `DayRing-x.x.x-Portable.exe`
+  → Runs directly, no installer
+
+---
+
+#### 🍎 macOS (Apple Silicon – M1 / M2 / M3)
+
+* **Recommended:** `DayRing-x.x.x-arm64.dmg`
+  → Drag-and-drop installer
+
+* **Alternative:** `DayRing-x.x.x-arm64-mac.zip`
+  → Same app, zipped instead of DMG
+> ⚠️ Note: Since this app is not yet signed by Apple, you may need to Right Click > Open to run it the first time.
+> ⚠️ Intel Macs are not supported in this release.
+
+---
+
+#### 🐧 Linux
+
+* **Recommended (Any distro):** `DayRing-x.x.x.AppImage`
+  → Portable, no install required, (auto-updates for v1.1.1+)
+
+* **Debian / Ubuntu:** `dayring_x.x.x_amd64.deb`
+  → Install via package manager
+
+---
+
+#### ❓ What are the other files?
+
+You can safely ignore these unless you know you need them:
+
+* `.blockmap`, `latest*.yml` → auto-updater metadata
+* `builder-debug.yml` → build/debug info
 
 ---
 
