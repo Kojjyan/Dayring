@@ -3,10 +3,50 @@ const path = require('path');
 const fs = require('fs');
 const AutoLaunch = require('auto-launch');
 const { autoUpdater } = require('electron-updater');
+const log = require('electron-log');
 
-// Prevent app crash on update error (e.g. signature validation failure on macOS)
-autoUpdater.on('error', (error) => {
-  console.error('Auto-update error:', error);
+// Configure logging
+log.transports.file.level = 'debug';
+// Clear log file on startup to prevent large files
+try {
+  const logPath = log.transports.file.getFile().path;
+  if (fs.existsSync(logPath)) {
+    fs.writeFileSync(logPath, '');
+  }
+} catch (e) {
+  console.error('Failed to clear log file:', e);
+}
+
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'debug';
+
+// Handle updates
+autoUpdater.on('checking-for-update', () => {
+  log.info('Checking for update...');
+});
+
+autoUpdater.on('update-available', (info) => {
+  log.info('Update available:', info);
+});
+
+autoUpdater.on('update-not-available', (info) => {
+  log.info('Update not available:', info);
+});
+
+autoUpdater.on('error', (err) => {
+  log.error('Error in auto-updater:', err);
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+  let log_message = "Download speed: " + progressObj.bytesPerSecond;
+  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+  log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+  log.info(log_message);
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+  log.info('Update downloaded:', info);
+  // Ask user to update or just notify
 });
 
 let tray = null;
@@ -41,7 +81,8 @@ const defaultSettings = {
   passedTimeColor: '#666666',
   position: { anchor: 'top-right', custom: null },
   autoStart: true,
-  showTimeRemaining: true
+  showTimeRemaining: true,
+  positionLocked: false
 };
 
 // Load settings from file
@@ -229,6 +270,7 @@ function createBuyMeCoffeeWindow() {
     maximizable: false,
     frame: false,
     title: 'Support DayRing',
+    icon: path.join(__dirname, '../../assets/favicon.ico'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -257,6 +299,7 @@ function createConfigureWindow() {
     maximizable: false,
     frame: false,
     title: 'DayRing - Configure Your Day',
+    icon: path.join(__dirname, '../../assets/favicon.ico'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -266,11 +309,7 @@ function createConfigureWindow() {
 
   configureWindow.loadFile(path.join(__dirname, '../renderer/configure.html'));
 
-  // Enable overlay dragging while configure window is open
-  enableOverlayDragging();
-
   configureWindow.on('closed', () => {
-    disableOverlayDragging();
     configureWindow = null;
   });
 }
@@ -302,6 +341,17 @@ function disableOverlayDragging() {
   isDraggingOverlay = false;
   dragStartPos = null;
   dragStartBounds = null;
+}
+
+function updateOverlayDraggingState() {
+  if (!overlayWindow) return;
+
+  // Enable dragging if position is not locked
+  if (!settings.positionLocked) {
+    enableOverlayDragging();
+  } else {
+    disableOverlayDragging();
+  }
 }
 
 function handleOverlayDragStart(cursorX, cursorY) {
@@ -422,6 +472,8 @@ function createOverlayWindow() {
   overlayWindow.setIgnoreMouseEvents(true, { forward: true });
   overlayWindow.loadFile(path.join(__dirname, '../renderer/overlay.html')).then(() => {
     updateOverlayWithSettings();
+    // Enable dragging by default (unless position is locked)
+    updateOverlayDraggingState();
   });
 
   if (!isOverlayEnabled) {
@@ -495,6 +547,9 @@ function updateOverlayWithSettings() {
 
     overlayWindow.setBounds({ x, y, width: windowSize, height: windowSize });
   }
+
+  // Update dragging state based on lock setting
+  updateOverlayDraggingState();
 }
 
 app.whenReady().then(async () => {
@@ -631,5 +686,13 @@ ipcMain.handle('set-auto-start', async (event, enabled) => {
   settings.autoStart = enabled;
   saveSettings(settings);
   await syncAutoLaunch();
+  return true;
+});
+
+// Position lock handler
+ipcMain.handle('set-position-locked', (event, locked) => {
+  settings.positionLocked = locked;
+  saveSettings(settings);
+  updateOverlayDraggingState();
   return true;
 });

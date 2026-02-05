@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,7 +47,7 @@
     }
 
     .header {
-      padding: 20px;
+      padding: 16px 20px;
       border-bottom: 1px solid #333;
       display: flex;
       align-items: center;
@@ -72,7 +73,7 @@
 
     .header-close:hover {
       color: #fff;
-      background: rgba(255,255,255,0.1);
+      background: rgba(255, 255, 255, 0.1);
     }
 
     .header h1 {
@@ -84,14 +85,13 @@
     .header .logo {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
     }
 
-    .logo-ring {
-      width: 32px;
-      height: 32px;
-      border: 4px solid #4a90d9;
-      border-radius: 50%;
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
     }
 
     .content {
@@ -183,7 +183,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
       border-radius: 6px;
       padding: 4px;
     }
@@ -246,13 +246,13 @@
       width: 24px;
       height: 24px;
       border-radius: 4px;
-      border: 2px solid rgba(255,255,255,0.2);
+      border: 2px solid rgba(255, 255, 255, 0.2);
       cursor: pointer;
       flex-shrink: 0;
     }
 
     .task-color:hover {
-      border-color: rgba(255,255,255,0.5);
+      border-color: rgba(255, 255, 255, 0.5);
     }
 
     .task-name {
@@ -268,7 +268,7 @@
     }
 
     .task-name:focus {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255, 255, 255, 0.1);
     }
 
     .task-name::placeholder {
@@ -285,7 +285,7 @@
 
     .task-time-input {
       width: 70px;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid #444;
       color: #fff;
       font-size: 13px;
@@ -297,14 +297,14 @@
 
     .task-time-input:focus {
       border-color: #4a90d9;
-      background: rgba(74,144,217,0.1);
+      background: rgba(74, 144, 217, 0.1);
     }
 
     /* Smart Time Input Container */
     .time-input-group {
       display: flex;
       align-items: center;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid #444;
       border-radius: 4px;
       overflow: hidden;
@@ -313,7 +313,7 @@
 
     .time-input-group:focus-within {
       border-color: #4a90d9;
-      background: rgba(74,144,217,0.1);
+      background: rgba(74, 144, 217, 0.1);
     }
 
     .time-input-group .time-part {
@@ -350,7 +350,7 @@
 
     .time-input-group .time-ampm:focus {
       outline: 1px solid #4a90d9;
-      background: rgba(74,144,217,0.2);
+      background: rgba(74, 144, 217, 0.2);
     }
 
     .task-time-separator {
@@ -375,7 +375,7 @@
     }
 
     .task-delete:hover {
-      background: rgba(255,107,107,0.2);
+      background: rgba(255, 107, 107, 0.2);
     }
 
     /* Task Validation Icons */
@@ -482,7 +482,7 @@
     .add-task-btn:hover {
       border-color: #4a90d9;
       color: #4a90d9;
-      background: rgba(74,144,217,0.1);
+      background: rgba(74, 144, 217, 0.1);
     }
 
     .add-task-btn .plus-icon {
@@ -496,7 +496,7 @@
       background: #2a2a4a;
       border-radius: 8px;
       padding: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
       z-index: 1000;
       display: none;
     }
@@ -522,7 +522,7 @@
 
     .color-option:hover {
       transform: scale(1.1);
-      border-color: rgba(255,255,255,0.5);
+      border-color: rgba(255, 255, 255, 0.5);
     }
 
     .color-option.selected {
@@ -544,14 +544,14 @@
       width: 32px;
       height: 32px;
       border-radius: 6px;
-      border: 2px solid rgba(255,255,255,0.2);
+      border: 2px solid rgba(255, 255, 255, 0.2);
       cursor: pointer;
       flex-shrink: 0;
       transition: border-color 0.2s;
     }
 
     .color-box:hover {
-      border-color: rgba(255,255,255,0.5);
+      border-color: rgba(255, 255, 255, 0.5);
     }
 
     .color-setting-label {
@@ -597,7 +597,7 @@
       align-items: center;
       gap: 8px;
       padding: 8px 12px;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid #444;
       border-radius: 6px;
       cursor: pointer;
@@ -643,7 +643,7 @@
       background: #2a2a4a;
       border: 1px solid #444;
       border-radius: 6px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       z-index: 100;
       display: none;
       max-height: 200px;
@@ -672,11 +672,11 @@
     }
 
     .palette-option:hover {
-      background: rgba(74,144,217,0.2);
+      background: rgba(74, 144, 217, 0.2);
     }
 
     .palette-option.selected {
-      background: rgba(74,144,217,0.3);
+      background: rgba(74, 144, 217, 0.3);
     }
 
     .palette-option .palette-preview {
@@ -725,11 +725,19 @@
     .position-instruction {
       font-size: 13px;
       color: #888;
-      padding: 12px;
-      background: rgba(74, 144, 217, 0.1);
+      padding: 12px 16px;
+      background: #252540;
       border-radius: 8px;
       margin-bottom: 16px;
       line-height: 1.5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .position-instruction-text {
+      flex: 1;
     }
 
     .anchor-grid {
@@ -809,6 +817,41 @@
       color: #4a90d9;
     }
 
+    /* Position Lock Button */
+    .lock-button {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: all 0.2s;
+      color: #888;
+    }
+
+    .lock-button:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    .lock-button.locked {
+      background: rgba(74, 144, 217, 0.3);
+      color: #4a90d9;
+    }
+
+    .lock-button.locked:hover {
+      background: rgba(74, 144, 217, 0.4);
+      color: #6ba3e0;
+      transform: scale(1.05);
+    }
+
+
     /* Rotation Input */
     .rotation-container {
       display: flex;
@@ -830,7 +873,7 @@
 
     .rotation-input {
       width: 70px;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid #444;
       color: #fff;
       font-size: 14px;
@@ -844,7 +887,7 @@
 
     .rotation-input:focus {
       border-color: #4a90d9;
-      background: rgba(74,144,217,0.1);
+      background: rgba(74, 144, 217, 0.1);
       cursor: text;
     }
 
@@ -924,19 +967,20 @@
       border-radius: 50%;
     }
 
-    .toggle-switch input:checked + .toggle-slider {
+    .toggle-switch input:checked+.toggle-slider {
       background-color: #4a90d9;
     }
 
-    .toggle-switch input:checked + .toggle-slider:before {
+    .toggle-switch input:checked+.toggle-slider:before {
       transform: translateX(22px);
     }
   </style>
 </head>
+
 <body>
   <div class="header">
     <div class="logo">
-      <div class="logo-ring"></div>
+      <img src="../../assets/favicon.ico" class="logo-icon" alt="DayRing Logo">
       <h1>DayRing</h1>
     </div>
     <button class="header-close" id="header-close" title="Close">&times;</button>
@@ -1065,7 +1109,11 @@
       </div>
       <div class="section-content">
         <div class="position-instruction">
-          While this window is open, you can drag the annulus to any position on screen. Or select a preset anchor below.
+          <span class="position-instruction-text">You can drag the annulus to any position on screen (when unlocked). Or
+            select a preset anchor below.</span>
+          <button class="lock-button" id="position-lock-btn" title="Lock/Unlock position">
+            🔓
+          </button>
         </div>
         <div class="anchor-grid" id="anchor-grid">
           <button class="anchor-btn" data-anchor="top-left" title="Top Left">
@@ -2353,12 +2401,47 @@
         });
       });
 
+      // Position lock button
+      let positionLocked = false;
+      const lockBtn = document.getElementById('position-lock-btn');
+
+      function updateLockButton() {
+        if (positionLocked) {
+          lockBtn.textContent = '🔒';
+          lockBtn.classList.add('locked');
+          lockBtn.title = 'Unlock position';
+        } else {
+          lockBtn.textContent = '🔓';
+          lockBtn.classList.remove('locked');
+          lockBtn.title = 'Lock position';
+        }
+      }
+
+      lockBtn.addEventListener('click', () => {
+        positionLocked = !positionLocked;
+        updateLockButton();
+
+        if (window.dayring && window.dayring.setPositionLocked) {
+          window.dayring.setPositionLocked(positionLocked);
+        }
+      });
+
       // Listen for position updates from drag
       if (window.dayring && window.dayring.onPositionChanged) {
         window.dayring.onPositionChanged((position) => {
           currentAnchor = 'custom';
           customPosition = position;
           updateAnchorSelection();
+        });
+      }
+
+      // Initialize lock button state from settings
+      if (window.dayring && window.dayring.getSettings) {
+        window.dayring.getSettings().then(settings => {
+          if (settings && settings.positionLocked !== undefined) {
+            positionLocked = settings.positionLocked;
+            updateLockButton();
+          }
         });
       }
     }
@@ -2371,4 +2454,5 @@
     });
   </script>
 </body>
+
 </html>

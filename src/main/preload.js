@@ -40,6 +40,9 @@ contextBridge.exposeInMainWorld('dayring', {
   // Auto-start
   setAutoStart: (enabled) => ipcRenderer.invoke('set-auto-start', enabled),
 
+  // Position lock
+  setPositionLocked: (locked) => ipcRenderer.invoke('set-position-locked', locked),
+
   // Window controls (frameless)
   closeWindow: () => ipcRenderer.invoke('window-close')
 });
